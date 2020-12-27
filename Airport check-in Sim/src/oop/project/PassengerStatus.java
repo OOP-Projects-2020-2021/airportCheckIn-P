@@ -1,4 +1,4 @@
-package utcn.oop.project;
+package oop.project;
 
 public enum PassengerStatus {
     IN_QUEUE,
@@ -6,5 +6,5 @@ public enum PassengerStatus {
     CHECKING_DETAILS,
     WEIGHTING_LUGGAGE,
     MOVE_TROUGH_GATE,
-    AT_WAITING_ROOM
+    IN_WAITING_ROOM
 }
