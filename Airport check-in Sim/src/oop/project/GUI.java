@@ -2,15 +2,15 @@ package oop.project;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.scene.control.DatePicker;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,7 +37,10 @@ public class GUI extends Application{
         Button buttonB = new Button("Edit");
         Button buttonC = new Button("View");
         topMenu.getChildren().addAll(buttonAddPassenger, buttonB, buttonC);
-        scene1 = new Scene(topMenu, 600, 600);
+
+        BorderPane borderPane1 = new BorderPane();
+        borderPane1.setTop(topMenu);
+        scene1 = new Scene(borderPane1, 600, 600);
 
         /*VBox leftMenu = new VBox();
         Button buttonD = new Button("D");
@@ -118,6 +121,7 @@ public class GUI extends Application{
         lastNameInput.setPromptText("last name");
         GridPane.setConstraints(lastNameInput, 1, 2);
 
+
         //address
         Label addressLabel = new Label("Address");
         GridPane.setConstraints(addressLabel, 0, 3);
@@ -126,13 +130,15 @@ public class GUI extends Application{
         addressInput.setPromptText("address");
         GridPane.setConstraints(addressInput, 1, 3);
 
-        //address
+        //birth date
         Label birthDateLabel = new Label("Birth date");
         GridPane.setConstraints(birthDateLabel, 0, 4);
-        //.Name input
-        TextField birthDateInput = new TextField();
-        birthDateInput.setPromptText("birth date");
-        GridPane.setConstraints(birthDateInput, 1, 4);
+        //date input
+        DatePicker birthDatePicker = new DatePicker();
+
+        GridPane.setConstraints(birthDatePicker, 1, 4);
+
+
 
         //citizenship
         Label citizenshipLabel = new Label("Citizenship");
@@ -208,12 +214,12 @@ public class GUI extends Application{
             }
             //set default value
             choiceBoxSeats.setValue(defaultValue);
-            seatInput.set(choiceBoxSeats.getValue());
-            GridPane.setConstraints(choiceBoxSeats, 1, 8);
+
+
         });
 
         GridPane.setConstraints(choiceBoxFlights, 1, 7);
-
+        GridPane.setConstraints(choiceBoxSeats, 1, 8);
 
 
 
@@ -233,11 +239,27 @@ public class GUI extends Application{
         savePassengerButton.setOnAction(e -> {
             //save everything in the database
 
-            int luggageWeight=Integer.parseInt(luggageWeightInput.getText());
-            Passenger passenger = new Passenger(firstNameInput.getText(), lastNameInput.getText(), addressInput.getText(),
-                    citizenshipInput.getText(), luggageWeight, flightInput.intValue(), seatInput.intValue());
-            Main.addToQueue(passenger);
+            LocalDate value = birthDatePicker.getValue();
+            Date birthDateInput = java.sql.Date.valueOf( value );
+            seatInput.set(choiceBoxSeats.getValue());                           //get the seat number
+            int queueNumber = choiceBoxQueue.getValue();                        //get the queue number
+            int luggageWeight=Integer.parseInt(luggageWeightInput.getText());   //get the luggage weight
 
+            Passenger passenger = new Passenger(firstNameInput.getText(), lastNameInput.getText(), birthDateInput, addressInput.getText(),
+                    citizenshipInput.getText(), luggageWeight, flightInput.intValue(), seatInput.intValue(), queueNumber);
+
+            Main.addToQueue(passenger, queueNumber);    // add passenger to queue
+
+            firstNameInput.clear();
+            lastNameInput.clear();
+            birthDatePicker.getEditor().clear();
+            birthDatePicker.setValue(null);
+            addressInput.clear();
+            citizenshipInput.clear();
+            luggageWeightInput.clear();
+            choiceBoxFlights.getSelectionModel().clearSelection();
+            choiceBoxSeats.getSelectionModel().clearSelection();
+            choiceBoxQueue.getSelectionModel().clearSelection();
 
             window.setScene(scene1);
         });
@@ -249,7 +271,7 @@ public class GUI extends Application{
         GridPane.setConstraints(cancelButton, 2, 10);
 
         gridAddPassenger.getChildren().addAll(text, firstNameLabel, firstNameInput, lastNameLabel, lastNameInput,
-                addressLabel, addressInput, birthDateLabel, birthDateInput, citizenshipLabel, citizenshipInput,
+                addressLabel, addressInput, birthDateLabel, birthDatePicker, citizenshipLabel, citizenshipInput,
                 luggageWeightLabel, luggageWeightInput, flightLabel, choiceBoxFlights, seatLabel, choiceBoxSeats, queueLabel, choiceBoxQueue,
                 savePassengerButton, cancelButton);
         sceneAddPassenger = new Scene(gridAddPassenger, 600, 600);
