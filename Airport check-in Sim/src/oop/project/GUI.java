@@ -1,13 +1,18 @@
 package oop.project;
 import javafx.application.Application;
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.control.DatePicker;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -18,9 +23,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GUI extends Application{
 
     Stage window;
-    Scene scene1, sceneAddPassenger;
+    Scene scene1, sceneAddPassenger, sceneFlightSchedule, sceneUpdatePassenger, sceneDeletePassenger;
+    boolean isFrozen = false;
 
-    //Button button;
+
     public static void launchGUI() {
         launch();
     }
@@ -34,65 +40,34 @@ public class GUI extends Application{
         HBox topMenu = new HBox();
         Button buttonAddPassenger = new Button("Add Passenger");
         buttonAddPassenger.setOnAction(e -> window.setScene(sceneAddPassenger));
-        Button buttonB = new Button("Edit");
-        Button buttonC = new Button("View");
-        topMenu.getChildren().addAll(buttonAddPassenger, buttonB, buttonC);
+        Button buttonUpdatePassenger = new Button("Update Passenger");
+        buttonUpdatePassenger.setOnAction(e -> {
+            boolean result;
+            if (isFrozen == false) {
+                result = ConfirmBox.display("Error", "Please, freeze everything first!", "Ok, Freeze", "No, thank you");
+                isFrozen = true;    ///need to implement
+            }
+            window.setScene(sceneUpdatePassenger);
+        });
+        Button buttonDeletePassenger = new Button("Delete Passenger");
+        buttonDeletePassenger.setOnAction(e -> {
+            boolean result;
+            if (isFrozen == false) {
+                result = ConfirmBox.display("Error", "Please, freeze everything first!", "Ok, Freeze", "No, thank you");
+                isFrozen = true;    ///need to implement
+            }
+            window.setScene(sceneDeletePassenger);
+        });
+        Button buttonFlightSchedule = new Button("Flights Schedule");
+        buttonFlightSchedule.setOnAction(e -> window.setScene(sceneFlightSchedule));
+
+        topMenu.getChildren().addAll(buttonAddPassenger, buttonUpdatePassenger, buttonDeletePassenger, buttonFlightSchedule);
 
         BorderPane borderPane1 = new BorderPane();
         borderPane1.setTop(topMenu);
         scene1 = new Scene(borderPane1, 600, 600);
 
-        /*VBox leftMenu = new VBox();
-        Button buttonD = new Button("D");
-        Button buttonE = new Button("E");
-        Button buttonF = new Button("F");
-        leftMenu.getChildren().addAll(buttonD, buttonE, buttonF);*/
 
-       /* BorderPane borderPane = new BorderPane();
-        borderPane.setTop(topMenu);*/
-        //borderPane.setLeft(leftMenu);
-/*
-        //window.setOnCloseRequest(e -> closeProgram());
-        window.setOnCloseRequest(e -> {
-                    e.consume();
-                    closeProgram();
-        });
-
-        button = new Button("Click me");
-        //button.setOnAction(e -> AlertBox.display("Title of window", "Taceti din gura :)"));
-        /*button.setOnAction(e -> {
-            boolean result = ConfirmBox.display("Title of Window", "Are you sure?");
-            System.out.println(result);
-        });*/
-
-        //button.setOnAction(e -> closeProgram());
-
-        /*StackPane layout = new StackPane();
-        layout.getChildren().add(buttonAddPassenger);
-        Scene scene = new Scene(layout, 300, 250);*/
-       /* Scene scene = new Scene(borderPane, 300, 250);
-        window.setScene(scene);
-        window.show();*/
-
-        /*window = primaryStage;
-
-        Label label1 = new Label("welcome to the first scene");
-        Button button1 = new Button("Go to scene 2");
-        button1.setOnAction(e -> window.setScene(scene2));
-
-        //Layout 1 - children are laid out in vertical column
-        VBox layout1 = new VBox(20); //layout that stacks all the buttons on top of each other in a column with 20px space
-        layout1.getChildren().addAll(label1, button1);
-        scene1 = new Scene(layout1, 200, 200);
-
-        //Button 2
-        Button button2 = new Button("Go back to scene 1");
-        button2.setOnAction(e -> window.setScene(scene1));
-
-        //Layout 2
-        StackPane layout2 = new StackPane();
-        layout2.getChildren().add(button2);
-        scene2 = new Scene(layout2, 600, 300);*/
 
 
         //Layout for adding more passengers
@@ -276,6 +251,112 @@ public class GUI extends Application{
                 savePassengerButton, cancelButton);
         sceneAddPassenger = new Scene(gridAddPassenger, 600, 600);
 
+
+
+
+
+        //scene delete passenger
+       /* GridPane gridDeletePassenger = new GridPane();
+        gridDeletePassenger.setPadding( new Insets(10, 10, 10, 10)); //padding for the grid margins
+        gridDeletePassenger.setVgap(8);//set vertical spacing between cells
+        gridDeletePassenger.setVgap(10); //horizontal spacing
+
+        //First text
+        Label text2 = new Label("You can only delete passengers which are in queue or in the waiting room!");
+        GridPane.setConstraints(text2, 1, 0);
+
+        //Find passenger
+        Label textFindPassenger = new Label("Choose a passenger");
+        GridPane.setConstraints(firstNameLabel, 0, 1);
+        //Passenger input
+        ChoiceBox<String> choiceBoxPassengers = new ChoiceBox<>();
+        ResultSet rsPassenger = MySqlCon.Query("select passenger.passenger_id, passenger.passenger_queue identity_card.id_first_name, identity_card.id_last_name, " +
+                "flight.flight_destination, ticket.ticket_flight_seat FROM passenger JOIN identity_card ON passenger.passenger_identityCard = identity_card.id_id " +
+                "JOIN ticket ON passenger.passenger_ticket_id = ticket.ticket_id JOIN flight ON ticket.ticket_flight_id = flight.flight_id");
+        //set default value
+        rsPassenger.next();
+        choiceBoxPassengers.setValue(rsPassenger.getString(3) + "  " + rsPassenger.getString(4) + "  " + rsPassenger.getString(5)+ "  " + rsPassenger.getInt(6));
+        choiceBoxPassengers.getItems().add(rsPassenger.getString(3) + "  " + rsPassenger.getString(4) + "  " + rsPassenger.getString(5)+ "  " + rsPassenger.getInt(6));
+        while (rs.next())
+            choiceBoxPassengers.getItems().add(rsPassenger.getString(3) + "  " + rsPassenger.getString(4) + "  " + rsPassenger.getString(5)+ "  " + rsPassenger.getInt(6));
+
+
+        Button buttonDelete = new Button("Delete Passenger");
+        buttonDelete.setOnAction(e -> {
+            //delete
+            String[] str = choiceBoxPassengers.getValue().split(" ");
+            int passengerIndex = Integer.parseInt(str[0]);
+
+
+            Main.addToQueue(passenger, queueNumber);    // add passenger to queue
+
+            firstNameInput.clear();
+            lastNameInput.clear();
+            birthDatePicker.getEditor().clear();
+            birthDatePicker.setValue(null);
+            addressInput.clear();
+            citizenshipInput.clear();
+            luggageWeightInput.clear();
+            choiceBoxFlights.getSelectionModel().clearSelection();
+            choiceBoxSeats.getSelectionModel().clearSelection();
+            choiceBoxQueue.getSelectionModel().clearSelection();
+
+            window.setScene(scene1);
+        });
+        GridPane.setConstraints(savePassengerButton, 1, 10);
+
+        //cancel button
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setOnAction(e -> window.setScene(scene1));
+        GridPane.setConstraints(cancelButton, 2, 10);
+
+        gridAddPassenger.getChildren().addAll(text, firstNameLabel, firstNameInput, lastNameLabel, lastNameInput,
+                addressLabel, addressInput, birthDateLabel, birthDatePicker, citizenshipLabel, citizenshipInput,
+                luggageWeightLabel, luggageWeightInput, flightLabel, choiceBoxFlights, seatLabel, choiceBoxSeats, queueLabel, choiceBoxQueue,
+                savePassengerButton, cancelButton);
+        sceneAddPassenger = new Scene(gridAddPassenger, 600, 600);
+*/
+
+
+        //scene flights schedule
+        BorderPane borderPaneFlightSchedule = new BorderPane();
+        HBox topFlightsScene = new HBox();
+        Button buttonGoBackToScene1 = new Button("Go back");
+        buttonGoBackToScene1.setOnAction(e -> window.setScene(scene1));
+        topFlightsScene.getChildren().add(buttonGoBackToScene1);
+        borderPaneFlightSchedule.setTop(topFlightsScene);
+
+
+        TableView<Flight> flightsTable;
+
+        //id column
+        TableColumn<Flight, Integer> flightID = new TableColumn<>("Id");
+        flightID.setMaxWidth(100);
+        flightID.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        //departure time column
+        TableColumn<Flight, Date> flightDeparture = new TableColumn<>("Departure Time");
+        flightDeparture.setMaxWidth(500);
+        flightDeparture.setCellValueFactory(new PropertyValueFactory<>("departureTime"));
+
+        //arrival time column
+        TableColumn<Flight, Date> flightArrival = new TableColumn<>("Arrival Time");
+        flightArrival.setMaxWidth(500);
+        flightArrival.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
+
+        //arrival time column
+        TableColumn<Flight, String> flightDestination = new TableColumn<>("Destination");
+        flightDestination.setMaxWidth(400);
+        flightDestination.setCellValueFactory(new PropertyValueFactory<>("destination"));
+
+        flightsTable = new TableView<>();
+        flightsTable.setItems(getFlight());
+        flightsTable.getColumns().addAll(flightID, flightDeparture, flightArrival, flightDestination);
+
+
+        borderPaneFlightSchedule.setCenter(flightsTable);
+        sceneFlightSchedule = new Scene(borderPaneFlightSchedule, 600, 600);
+
         window.setScene(scene1);
         window.show();
 
@@ -300,7 +381,7 @@ public class GUI extends Application{
         primaryStage.show();*/
     }
     private void closeProgram(){
-        Boolean answer = ConfirmBox.display("Title", "Sure you want to exit?");
+        Boolean answer = ConfirmBox.display("Title", "Sure you want to exit?", "Yes", "No");
         if(answer)
         {
             window.close();
@@ -318,6 +399,25 @@ public class GUI extends Application{
             System.out.println("Error " + message + " is not a number");
             return false;
         }
+    }
+
+    private ObservableList<Flight> getFlight(){                                 ///for the table
+        ObservableList<Flight> flights = FXCollections.observableArrayList();
+        ResultSet rs = MySqlCon.Query("select * from flight");
+        while (true) {
+            try {
+                if (!rs.next()) break;
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            try {
+                flights.add(new Flight(rs.getInt(1), rs.getTimestamp(2) ,rs.getTimestamp(3), rs.getString(4) ));
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        return flights;
     }
 
 }
