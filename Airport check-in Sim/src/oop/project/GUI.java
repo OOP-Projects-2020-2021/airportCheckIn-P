@@ -1,15 +1,21 @@
 package oop.project;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.control.DatePicker;
+import javafx.util.Duration;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -25,7 +31,9 @@ public class GUI extends Application{
     Stage window;
     Scene scene1, sceneAddPassenger, sceneFlightSchedule, sceneUpdatePassenger, sceneDeletePassenger;
     boolean isFrozen = false;
-
+    Timeline timeline;
+    Button pausePlayButton;
+    TableView<Passenger> gatesTable;
 
     public static void launchGUI() {
         launch();
@@ -65,6 +73,22 @@ public class GUI extends Application{
 
         BorderPane borderPane1 = new BorderPane();
         borderPane1.setTop(topMenu);
+
+
+
+
+        borderPane1.setCenter(gatesTable);
+
+        HBox bottomMenu = new HBox();
+        pausePlayButton = new Button("Pause/Play");
+        Button resetButton = new Button("Reset");
+         //resetButton.setOnAction(e -> reset());
+
+        //reset();
+        bottomMenu.getChildren().addAll(pausePlayButton, resetButton);
+        bottomMenu.setAlignment(Pos.CENTER);
+        borderPane1.setBottom(bottomMenu);
+
         scene1 = new Scene(borderPane1, 600, 600);
 
 
@@ -419,5 +443,55 @@ public class GUI extends Application{
 
         return flights;
     }
+    private ObservableList<Passenger> getPassenger(){                                 ///for the table
+        ObservableList<Passenger> gates = FXCollections.observableArrayList();
 
+        gates.add(Main.queue1.poll());
+        gates.add(Main.queue2.poll());
+        gates.add(Main.queue3.poll());
+        gates.add(Main.queue4.poll());
+        gates.add(Main.queue5.poll());
+        gates.add(Main.queue6.poll());
+        gates.add(Main.queue7.poll());
+        gates.add(Main.queue8.poll());
+        gates.add(Main.queue9.poll());
+        gates.add(Main.queue10.poll());
+        return gates;
+    }
+
+    /*private void reset(){
+        if (timeline != null){
+            timeline.stop();
+        }
+
+        //simulation table
+        //id column
+        TableColumn<Passenger, Integer> passengerIdColumn = new TableColumn<>("ID");
+        passengerIdColumn.setMinWidth(100);
+        passengerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        //status column
+        TableColumn<Passenger, PassengerStatus> passengerStatusColumn = new TableColumn<>("Status");
+        passengerStatusColumn.setMinWidth(400);
+        passengerStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+
+
+        gatesTable = new TableView<>();
+        gatesTable.setItems(getPassenger());
+        gatesTable.getColumns().addAll(passengerIdColumn, passengerStatusColumn);
+
+        timeline = new Timeline(new KeyFrame(Duration.seconds(2), e ->{
+            if(moreStepsToDo()) {
+                doNextStep();
+            }else {
+                timeline.stop();
+            }
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+
+        pausePlayButton.disabledProperty().bind(Bindings.createBooleanBinding())
+
+    }
+    }*/
 }
