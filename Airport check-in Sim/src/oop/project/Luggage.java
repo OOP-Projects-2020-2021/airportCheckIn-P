@@ -10,8 +10,12 @@ public class Luggage {
         MySqlCon.insertIntoDB("INSERT INTO luggage (luggage_weight) VALUES ('" +weight+"');");
         this.weight = weight;
     }
+    public Luggage(int luggageId, int weight){
+        this.weight = weight;
+        this.luggageId = luggageId;
+    }
 
-    public double gwtWeight()
+    public int getWeight()
     {
         return this.weight;
     }

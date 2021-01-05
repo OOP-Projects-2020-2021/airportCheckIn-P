@@ -8,10 +8,10 @@ public class Passenger {
     private IdentityCard identityCard; //think about it
     private Luggage luggage;
     private PassengerStatus status;
-    private int queueNumber;
+    private Integer queueNumber;
     private Integer id;
 
-    public Passenger(String firstName, String lastName,Date birthDate, String address, String citizenship, int luggageWeight, int flight, int seat, int queueNumber)  {
+    public Passenger(String firstName, String lastName,Date birthDate, String address, String citizenship, int luggageWeight, int flight, int seat, Integer queueNumber)  {
         this.ticket = new Ticket(flight, seat);
         this.identityCard = new IdentityCard(firstName, lastName, birthDate, address,  citizenship);
         this.luggage = new Luggage(luggageWeight);
@@ -21,13 +21,14 @@ public class Passenger {
         int id = MySqlCon.getLastIndex("id_id", "SELECT * FROM identity_card ORDER BY id_id DESC LIMIT 1");
         int luggage = MySqlCon.getLastIndex("luggage_id", "SELECT * FROM luggage ORDER BY luggage_id DESC LIMIT 1");
         int ticket = MySqlCon.getLastIndex("ticket_id", "SELECT * FROM ticket ORDER BY ticket_id DESC LIMIT 1");
-        MySqlCon.insertIntoDB("INSERT INTO passenger (passenger_identityCard, passenger_luggage_id, passenger_ticket_id, passenger_queue) VALUES ('" +id+"','"+luggage+"','"+ticket+"','"+ queueNumber+"');");
+        MySqlCon.insertIntoDB("INSERT INTO passenger (passenger_identityCard, passenger_luggage_id, passenger_ticket_id) VALUES ('" +id+"','"+luggage+"','"+ticket+"');");
         this.id = MySqlCon.getLastIndex("passenger_id", "SELECT * FROM passenger ORDER BY passenger_id DESC LIMIT 1");
     }
 
-    public Passenger(Integer id, String firstName, String lastName,Date birthDate, String address, String citizenship, int luggageWeight, int flight, int seat, int queueNumber)  {
-        this.ticket = new Ticket(flight, seat);
-        this.identityCard = new IdentityCard(firstName, lastName, birthDate, address,  citizenship);
+    public Passenger(Integer id, int idId, int ticketId, int luggageId, String firstName, String lastName,Date birthDate, String address,
+                     String citizenship, int luggageWeight, int flight, int seat, Integer queueNumber)  {
+        this.ticket = new Ticket(ticketId, flight, seat);
+        this.identityCard = new IdentityCard(idId, firstName, lastName, birthDate, address,  citizenship);
         this.luggage = new Luggage(luggageWeight);
         this.status = PassengerStatus.IN_QUEUE;
         this.queueNumber = queueNumber;
@@ -84,5 +85,15 @@ public class Passenger {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public int getQueueNumber() {
+        return queueNumber;
+    }
+
+    public void setQueueNumber(int queueNumber) {
+        this.queueNumber = queueNumber;
+    }
+
+
 }
 

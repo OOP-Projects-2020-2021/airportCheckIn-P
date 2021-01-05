@@ -35,11 +35,12 @@ public class Main{
                 throwables.printStackTrace();
             }
             try {
-                int index = rs.getInt("passenger_queue");
-                Passenger passenger = new Passenger(rs.getInt("passenger_id"), rs.getString("id_first_name"), rs.getString("id_last_name"),
+                int index = rs.getInt("ticket_flight_id");
+                Passenger passenger = new Passenger(rs.getInt("passenger_id"), rs.getInt("identity_card.id_id"), rs.getInt("ticket.ticket_id"),
+                        rs.getInt("luggage.luggage_id"), rs.getString("id_first_name"), rs.getString("id_last_name"),
                         rs.getDate("id_birth_date"), rs.getString("id_address"),
                         rs.getString("id_citizenship"), rs.getInt("luggage_weight"), rs.getInt("flight_id"),
-                        rs.getInt("ticket_flight_seat"), rs.getInt("passenger_queue"));
+                        rs.getInt("ticket_flight_seat"), rs.getInt("ticket_flight_id"));
                 Main.addToQueue(passenger, index);
 
             } catch (SQLException throwables) {
