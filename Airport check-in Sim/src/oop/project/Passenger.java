@@ -2,6 +2,7 @@ package oop.project;
 
 import java.sql.SQLException;
 import java.sql.Date;
+import java.util.Random;
 
 public class Passenger {
     private Ticket ticket;
@@ -10,6 +11,17 @@ public class Passenger {
     private PassengerStatus status;
     private Integer queueNumber;
     private Integer id;
+    private int gateTime;
+    private int startGateTime;
+    private int checkDetailsTime;
+    private int startCheckDetailsTime;
+    private int weightLuggageTime;
+    private int startWeightLuggageTime;
+    private int moveThroughGateTime;
+    private int startMoveThroughGateTime;
+    private final int inWaitingRoomTime = 1;
+    private int startInWaitingRoomTime;
+
 
     public Passenger(String firstName, String lastName,Date birthDate, String address, String citizenship, int luggageWeight, int flight, int seat, Integer queueNumber)  {
         this.ticket = new Ticket(flight, seat);
@@ -17,6 +29,11 @@ public class Passenger {
         this.luggage = new Luggage(luggageWeight);
         this.status = PassengerStatus.IN_QUEUE;
         this.queueNumber = queueNumber;
+
+        this.gateTime = getRandom();
+        this.checkDetailsTime = getRandom();
+        this.weightLuggageTime = getRandom();
+        this.moveThroughGateTime = getRandom();
 
         int id = MySqlCon.getLastIndex("id_id", "SELECT * FROM identity_card ORDER BY id_id DESC LIMIT 1");
         int luggage = MySqlCon.getLastIndex("luggage_id", "SELECT * FROM luggage ORDER BY luggage_id DESC LIMIT 1");
@@ -29,11 +46,22 @@ public class Passenger {
                      String citizenship, int luggageWeight, int flight, int seat, Integer queueNumber)  {
         this.ticket = new Ticket(ticketId, flight, seat);
         this.identityCard = new IdentityCard(idId, firstName, lastName, birthDate, address,  citizenship);
-        this.luggage = new Luggage(luggageWeight);
+        this.luggage = new Luggage(luggageId, luggageWeight);
         this.status = PassengerStatus.IN_QUEUE;
         this.queueNumber = queueNumber;
         this.id = id;
-       }
+
+        this.gateTime = getRandom();
+        this.checkDetailsTime = getRandom();
+        this.weightLuggageTime = getRandom();
+        this.moveThroughGateTime = getRandom();
+    }
+
+
+    private int getRandom(){
+        Random rand = new Random();
+        return rand.nextInt(12);
+    }
 
 
     public void setTicket(){
@@ -95,5 +123,64 @@ public class Passenger {
     }
 
 
+    public int getGateTime() {
+        return gateTime;
+    }
+
+    public int getCheckDetailsTime() {
+        return checkDetailsTime;
+    }
+
+    public int getWeightLuggageTime() {
+        return weightLuggageTime;
+    }
+
+    public int getMoveThroughGateTime() {
+        return moveThroughGateTime;
+    }
+
+    public int getInWaitingRoomTime() {
+        return inWaitingRoomTime;
+    }
+
+    public int getStartGateTime() {
+        return startGateTime;
+    }
+
+    public void setStartGateTime(int startGateTime) {
+        this.startGateTime = startGateTime;
+    }
+
+    public int getStartCheckDetailsTime() {
+        return startCheckDetailsTime;
+    }
+
+    public void setStartCheckDetailsTime(int startCheckDetailsTime) {
+        this.startCheckDetailsTime = startCheckDetailsTime;
+    }
+
+    public int getStartWeightLuggageTime() {
+        return startWeightLuggageTime;
+    }
+
+    public int getStartMoveThroughGateTime() {
+        return startMoveThroughGateTime;
+    }
+
+    public void setStartMoveThroughGateTime(int startMoveThroughGateTime) {
+        this.startMoveThroughGateTime = startMoveThroughGateTime;
+    }
+
+    public int getStartInWaitingRoomTime() {
+        return startInWaitingRoomTime;
+    }
+
+    public void setStartInWaitingRoomTime(int startInWaitingRoomTime) {
+        this.startInWaitingRoomTime = startInWaitingRoomTime;
+    }
+
+    public void setStartWeightLuggageTime(int startWeightLuggageTime) {
+        this.startWeightLuggageTime = startWeightLuggageTime;
+    }
 }
 

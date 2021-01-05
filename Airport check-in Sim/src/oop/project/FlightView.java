@@ -55,9 +55,9 @@ public class FlightView {
         flightsTable.getColumns().addAll(flightID, flightDeparture, flightArrival, flightDestination);
 
         flightsTable.setOnMouseClicked(e -> {
-
-            SeatsViewBox.display(flightsTable.getSelectionModel().getSelectedItem());
-            //AlertBox.display("It works", "yey");
+            if (flightsTable.getSelectionModel().getSelectedItem()!=null) {
+                SeatsViewBox.display(flightsTable.getSelectionModel().getSelectedItem());
+            }
         });
         borderPaneFlightSchedule.setCenter(flightsTable);
         sceneFlightSchedule = new Scene(borderPaneFlightSchedule, 600, 600);

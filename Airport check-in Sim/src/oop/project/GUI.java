@@ -38,7 +38,9 @@ public class GUI extends Application{
     private Timeline timeline;
     Button pausePlayButton;
     TableView<Passenger> gatesTable;
+    TableView<Luggage> luggageTableView;
     final ObservableList<Passenger> gates = FXCollections.observableArrayList();
+    final ObservableList<Luggage> luggages = FXCollections.observableArrayList();
 
     public static void launchGUI() {
         launch();
@@ -132,7 +134,32 @@ public class GUI extends Application{
             //AlertBox.display("It works", "yey");
         });
 
-        borderPane1.setCenter(gatesTable);
+
+        //gate column
+        TableColumn<Luggage, Integer> luggageId = new TableColumn<>("ID");
+        luggageId.setMaxWidth(100);
+        luggageId.setCellValueFactory(new PropertyValueFactory<>("luggageId"));
+
+        //id column
+        TableColumn<Luggage, Integer> luggageWeight = new TableColumn<>("Weight");
+        luggageWeight.setMaxWidth(100);
+        luggageWeight.setCellValueFactory(new PropertyValueFactory<>("weight"));
+
+        //status
+        TableColumn<Luggage, LuggageStatus> luggageStatus = new TableColumn<>("Status");
+        luggageStatus.setMaxWidth(500);
+        luggageStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+
+
+        luggageTableView = new TableView<>();
+        luggageTableView.setItems(luggages);
+        luggageTableView.getColumns().addAll(luggageId, luggageWeight, luggageStatus);
+
+        HBox tablesHBox = new HBox();
+        tablesHBox.getChildren().addAll(gatesTable, luggageTableView);
+
+        borderPane1.setCenter(tablesHBox);
 
         HBox bottomMenu = new HBox();
         pausePlayButton = new Button("Pause/Play");
@@ -197,24 +224,35 @@ public class GUI extends Application{
         return gates;
     }
 
+
     public Passenger refreshQueue(Queue<Passenger> queue){
         if (queue.peek()!=null) {
             if (queue.peek().getStatus() == PassengerStatus.IN_QUEUE) {
                 queue.peek().setStatus(PassengerStatus.AT_CHECK_IN);
+                queue.peek().setStartGateTime((int)timeline.getCurrentTime().toSeconds());
                 return queue.peek();
-            } else if (queue.peek().getStatus() == PassengerStatus.AT_CHECK_IN) {
+            } else if (queue.peek().getStatus() == PassengerStatus.AT_CHECK_IN && queue.peek().getStartGateTime()+queue.peek().getGateTime() >= (int)timeline.getCurrentTime().toSeconds()) {
                 queue.peek().setStatus(PassengerStatus.CHECKING_DETAILS);
+                queue.peek().setStartCheckDetailsTime((int)timeline.getCurrentTime().toSeconds());
                 return queue.peek();
-            } else if (queue.peek().getStatus() == PassengerStatus.CHECKING_DETAILS) {
-                queue.peek().setStatus(PassengerStatus.WEIGHTING_LUGGAGE);
+            } else if (queue.peek().getStatus() == PassengerStatus.CHECKING_DETAILS && queue.peek().getStartCheckDetailsTime()+queue.peek().getCheckDetailsTime() >= (int)timeline.getCurrentTime().toSeconds()) {
+                if (queue.peek().getLuggage().getStatus() == LuggageStatus.NOT_WEIGHTED) {
+                    queue.peek().setStatus(PassengerStatus.WEIGHTING_LUGGAGE);
+                    queue.peek().setStartWeightLuggageTime((int) timeline.getCurrentTime().toSeconds());
+                }else{
+                    queue.peek().setStatus(PassengerStatus.MOVE_TROUGH_GATE);
+                    queue.peek().setStartMoveThroughGateTime((int) timeline.getCurrentTime().toSeconds());
+                }
                 return queue.peek();
-            } else if (queue.peek().getStatus() == PassengerStatus.WEIGHTING_LUGGAGE) {
+            } else if (queue.peek().getStatus() == PassengerStatus.WEIGHTING_LUGGAGE && queue.peek().getStartWeightLuggageTime()+queue.peek().getWeightLuggageTime() >= (int)timeline.getCurrentTime().toSeconds()) {
                 queue.peek().setStatus(PassengerStatus.MOVE_TROUGH_GATE);
+                queue.peek().setStartMoveThroughGateTime((int)timeline.getCurrentTime().toSeconds());
                 return queue.peek();
-            } else if (queue.peek().getStatus() == PassengerStatus.MOVE_TROUGH_GATE) {
+            } else if (queue.peek().getStatus() == PassengerStatus.MOVE_TROUGH_GATE && queue.peek().getStartMoveThroughGateTime()+queue.peek().getMoveThroughGateTime() >= (int)timeline.getCurrentTime().toSeconds()) {
                 queue.peek().setStatus(PassengerStatus.IN_WAITING_ROOM);
+                queue.peek().setStartInWaitingRoomTime((int)timeline.getCurrentTime().toSeconds() );
                 return queue.peek();
-            } else if (queue.peek().getStatus() == PassengerStatus.IN_WAITING_ROOM) {
+            } else if (queue.peek().getStatus() == PassengerStatus.IN_WAITING_ROOM && queue.peek().getStartInWaitingRoomTime()+queue.peek().getInWaitingRoomTime() >= (int)timeline.getCurrentTime().toSeconds()) {
                 return queue.poll();
             }
         }
@@ -234,6 +272,57 @@ public class GUI extends Application{
         gates.add(refreshQueue(Main.queue9));
         gates.add(refreshQueue(Main.queue10));
         gatesTable.setItems(gates);
+    }
+    public Luggage refreshLuggage(Passenger passenger){
+        if (passenger.getStatus() == PassengerStatus.WEIGHTING_LUGGAGE){
+            passenger.getLuggage().setStatus(LuggageStatus.WEIGHTING);
+        }
+        if (passenger.getStatus() == PassengerStatus.MOVE_TROUGH_GATE){
+            passenger.getLuggage().setStatus(LuggageStatus.WEIGHTED);
+        }
+        if (passenger.getStatus() == PassengerStatus.IN_WAITING_ROOM){
+            passenger.getLuggage().setStatus(LuggageStatus.SENT_TO_PLANE);
+        }
+        return passenger.getLuggage();
+    }
+    public void refreshLuggageTable(){
+        luggages.clear();
+        if (Main.queue1.peek() != null){
+            luggages.add(refreshLuggage(Main.queue1.peek()));
+        }else luggages.add(null);
+
+        if (Main.queue2.peek() != null){
+            luggages.add(refreshLuggage(Main.queue2.peek()));
+        }else luggages.add(null);
+
+        if (Main.queue3.peek() != null){
+            luggages.add(refreshLuggage(Main.queue3.peek()));
+        }else luggages.add(null);
+
+        if (Main.queue4.peek() != null){
+            luggages.add(refreshLuggage(Main.queue4.peek()));
+        }else luggages.add(null);
+
+        if (Main.queue5.peek() != null){
+            luggages.add(refreshLuggage(Main.queue5.peek()));
+        }else luggages.add(null);
+
+        if (Main.queue6.peek() != null){
+            luggages.add(refreshLuggage(Main.queue6.peek()));
+        }else luggages.add(null);
+        if (Main.queue7.peek() != null){
+            luggages.add(refreshLuggage(Main.queue7.peek()));
+        }else luggages.add(null);
+        if (Main.queue8.peek() != null){
+            luggages.add(refreshLuggage(Main.queue8.peek()));
+        }else luggages.add(null);
+        if (Main.queue9.peek() != null){
+            luggages.add(refreshLuggage(Main.queue9.peek()));
+        }else luggages.add(null);
+        if (Main.queue10.peek() != null){
+            luggages.add(refreshLuggage(Main.queue10.peek()));
+        }else luggages.add(null);
+
     }
 
     @FXML
@@ -263,10 +352,12 @@ public class GUI extends Application{
         gates.clear();
         Main.initQueue();
         refreshTable();
+        refreshLuggageTable();
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(10), e ->{
             if(moreStepsToDo()) {
                 refreshTable();
+                refreshLuggageTable();
             }else {
                 timeline.stop();
                 System.out.println("stopped");
