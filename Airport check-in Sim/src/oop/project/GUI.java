@@ -57,7 +57,19 @@ public class GUI extends Application{
 
         HBox topMenu = new HBox();
         Button buttonAddPassenger = new Button("Add Passenger");
-        buttonAddPassenger.setOnAction(e -> window.setScene(sceneAddPassenger));
+        buttonAddPassenger.setOnAction(e -> {
+            if (timeline.getStatus() == Animation.Status.RUNNING) {
+                boolean result = ConfirmBox.display("Warning", "Would you like to pause the simulation to proceed?", "Yes, please", "No, thank you!");
+                if (result == true){
+                    timeline.stop();
+                    System.out.println("stopped");
+                    window.setScene(sceneAddPassenger);
+                }
+            }
+            else{
+                window.setScene(sceneAddPassenger);
+            }
+        });
         Button buttonUpdatePassenger = new Button("Update Passenger");
         buttonUpdatePassenger.setOnAction(e -> {
             boolean result;
@@ -69,12 +81,18 @@ public class GUI extends Application{
         });
         Button buttonDeletePassenger = new Button("Delete Passenger");
         buttonDeletePassenger.setOnAction(e -> {
-            boolean result;
-            if (isFrozen == false) {
-                result = ConfirmBox.display("Error", "Please, freeze everything first!", "Ok, Freeze", "No, thank you");
-                isFrozen = true;    ///need to implement
+            if (timeline.getStatus() == Animation.Status.RUNNING) {
+                boolean result = ConfirmBox.display("Warning", "You have to stop the simulation first?", "Yes, please", "No, thank you!");
+                if (result == true){
+                    timeline.stop();
+                    System.out.println("stopped");
+                    window.setScene(sceneDeletePassenger);
+                    reset();
+                }
             }
-            window.setScene(sceneDeletePassenger);
+            else{
+                window.setScene(sceneDeletePassenger);
+            }
         });
         Button buttonFlightSchedule = new Button("Flights Schedule");
         buttonFlightSchedule.setOnAction(e -> window.setScene(sceneFlightSchedule));
@@ -117,6 +135,8 @@ public class GUI extends Application{
 
         HBox bottomMenu = new HBox();
         pausePlayButton = new Button("Pause/Play");
+        Button stopButton = new Button("Stop");
+        stopButton.setOnAction(e -> timeline.stop());
         Button resetButton = new Button("Reset");
         resetButton.setOnAction(e -> reset());
 
@@ -130,75 +150,7 @@ public class GUI extends Application{
 
 
         sceneAddPassenger = InsertPassengerScene.display(window, scene1);
-        //sceneAddPassenger = new Scene(gridAddPassenger, 600, 600);
-
-
-
-
-
-        //scene delete passenger
-       /* GridPane gridDeletePassenger = new GridPane();
-        gridDeletePassenger.setPadding( new Insets(10, 10, 10, 10)); //padding for the grid margins
-        gridDeletePassenger.setVgap(8);//set vertical spacing between cells
-        gridDeletePassenger.setVgap(10); //horizontal spacing
-
-        //First text
-        Label text2 = new Label("You can only delete passengers which are in queue or in the waiting room!");
-        GridPane.setConstraints(text2, 1, 0);
-
-        //Find passenger
-        Label textFindPassenger = new Label("Choose a passenger");
-        GridPane.setConstraints(firstNameLabel, 0, 1);
-        //Passenger input
-        ChoiceBox<String> choiceBoxPassengers = new ChoiceBox<>();
-        ResultSet rsPassenger = MySqlCon.Query("select passenger.passenger_id, passenger.passenger_queue identity_card.id_first_name, identity_card.id_last_name, " +
-                "flight.flight_destination, ticket.ticket_flight_seat FROM passenger JOIN identity_card ON passenger.passenger_identityCard = identity_card.id_id " +
-                "JOIN ticket ON passenger.passenger_ticket_id = ticket.ticket_id JOIN flight ON ticket.ticket_flight_id = flight.flight_id");
-        //set default value
-        rsPassenger.next();
-        choiceBoxPassengers.setValue(rsPassenger.getString(3) + "  " + rsPassenger.getString(4) + "  " + rsPassenger.getString(5)+ "  " + rsPassenger.getInt(6));
-        choiceBoxPassengers.getItems().add(rsPassenger.getString(3) + "  " + rsPassenger.getString(4) + "  " + rsPassenger.getString(5)+ "  " + rsPassenger.getInt(6));
-        while (rs.next())
-            choiceBoxPassengers.getItems().add(rsPassenger.getString(3) + "  " + rsPassenger.getString(4) + "  " + rsPassenger.getString(5)+ "  " + rsPassenger.getInt(6));
-
-
-        Button buttonDelete = new Button("Delete Passenger");
-        buttonDelete.setOnAction(e -> {
-            //delete
-            String[] str = choiceBoxPassengers.getValue().split(" ");
-            int passengerIndex = Integer.parseInt(str[0]);
-
-
-            Main.addToQueue(passenger, queueNumber);    // add passenger to queue
-
-            firstNameInput.clear();
-            lastNameInput.clear();
-            birthDatePicker.getEditor().clear();
-            birthDatePicker.setValue(null);
-            addressInput.clear();
-            citizenshipInput.clear();
-            luggageWeightInput.clear();
-            choiceBoxFlights.getSelectionModel().clearSelection();
-            choiceBoxSeats.getSelectionModel().clearSelection();
-            choiceBoxQueue.getSelectionModel().clearSelection();
-
-            window.setScene(scene1);
-        });
-        GridPane.setConstraints(savePassengerButton, 1, 10);
-
-        //cancel button
-        Button cancelButton = new Button("Cancel");
-        cancelButton.setOnAction(e -> window.setScene(scene1));
-        GridPane.setConstraints(cancelButton, 2, 10);
-
-        gridAddPassenger.getChildren().addAll(text, firstNameLabel, firstNameInput, lastNameLabel, lastNameInput,
-                addressLabel, addressInput, birthDateLabel, birthDatePicker, citizenshipLabel, citizenshipInput,
-                luggageWeightLabel, luggageWeightInput, flightLabel, choiceBoxFlights, seatLabel, choiceBoxSeats, queueLabel, choiceBoxQueue,
-                savePassengerButton, cancelButton);
-        sceneAddPassenger = new Scene(gridAddPassenger, 600, 600);
-*/
-
-
+        sceneDeletePassenger = DeletePassengerScene.display(window, scene1);
         sceneFlightSchedule = FlightView.display(window, scene1);
 
         window.setScene(scene1);
@@ -285,12 +237,15 @@ public class GUI extends Application{
         }
 
         gates.clear();
+        Main.initQueue();
+        refreshTable();
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(10), e ->{
             if(moreStepsToDo()) {
                 refreshTable();
             }else {
                 timeline.stop();
+                System.out.println("stopped");
             }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);

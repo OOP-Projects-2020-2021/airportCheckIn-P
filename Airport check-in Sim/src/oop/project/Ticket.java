@@ -7,7 +7,7 @@ public class Ticket {
     int id;
 
     public Ticket(int flight, int seat) {
-        MySqlCon.insertIntoDB("INSERT INTO ticket (ticket_flight_id, ticket_flight_seat) VALUES ('" +flight+"', '"+seat+"');");
+        MySqlCon.updateDB("INSERT INTO ticket (ticket_flight_id, ticket_flight_seat) VALUES ('" +flight+"', '"+seat+"');");
         this.seat = seat;
         this.flightId = flight;
         //something with flight too

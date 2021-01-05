@@ -21,7 +21,7 @@ public class Passenger {
         int id = MySqlCon.getLastIndex("id_id", "SELECT * FROM identity_card ORDER BY id_id DESC LIMIT 1");
         int luggage = MySqlCon.getLastIndex("luggage_id", "SELECT * FROM luggage ORDER BY luggage_id DESC LIMIT 1");
         int ticket = MySqlCon.getLastIndex("ticket_id", "SELECT * FROM ticket ORDER BY ticket_id DESC LIMIT 1");
-        MySqlCon.insertIntoDB("INSERT INTO passenger (passenger_identityCard, passenger_luggage_id, passenger_ticket_id) VALUES ('" +id+"','"+luggage+"','"+ticket+"');");
+        MySqlCon.updateDB("INSERT INTO passenger (passenger_identityCard, passenger_luggage_id, passenger_ticket_id) VALUES ('" +id+"','"+luggage+"','"+ticket+"');");
         this.id = MySqlCon.getLastIndex("passenger_id", "SELECT * FROM passenger ORDER BY passenger_id DESC LIMIT 1");
     }
 

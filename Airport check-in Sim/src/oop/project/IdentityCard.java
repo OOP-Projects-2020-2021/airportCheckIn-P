@@ -11,7 +11,7 @@ public class IdentityCard {
     private int id;
 
     public IdentityCard(String firstName, String lastName, Date birthDate, String address,  String citizenship){
-        MySqlCon.insertIntoDB("INSERT INTO identity_card (id_first_name, id_last_name, id_address, id_birth_date, id_citizenship) VALUES ('" +firstName+"', '"+lastName+"', '"+address+"', '"+birthDate+"', '"+citizenship+"');");
+        MySqlCon.updateDB("INSERT INTO identity_card (id_first_name, id_last_name, id_address, id_birth_date, id_citizenship) VALUES ('" +firstName+"', '"+lastName+"', '"+address+"', '"+birthDate+"', '"+citizenship+"');");
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;

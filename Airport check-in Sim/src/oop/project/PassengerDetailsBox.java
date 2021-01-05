@@ -97,9 +97,9 @@ public class PassengerDetailsBox {
 
 
        //seat
-        Label seatLabel = new Label("Flight");
-        GridPane.setConstraints(seatLabel, 0, 7);
-        //flight input
+        Label seatLabel = new Label("Seat");
+        GridPane.setConstraints(seatLabel, 0, 8);
+        //seat input
         TextField seatInput = new TextField();
         seatInput.setText(String.valueOf(passenger.getTicket().getSeat()));
         GridPane.setConstraints(seatInput, 1, 8);

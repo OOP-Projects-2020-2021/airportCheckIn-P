@@ -20,7 +20,7 @@ public class MySqlCon {
     }
 
 
-    public static void insertIntoDB(String statement){
+    public static void updateDB(String statement){
         try{
             Statement stmt = con.createStatement();
             stmt.executeUpdate(statement);

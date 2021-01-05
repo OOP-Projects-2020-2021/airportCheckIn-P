@@ -21,11 +21,11 @@ public class Main{
 	// write your code here
 
         MySqlCon.mySqlConnect();
-        Main.initQueue();
+        //Main.initQueue();
         GUI.launchGUI();
         MySqlCon.mySqlDisconnect();
     }
-    private static void initQueue(){
+    public static void initQueue(){
 
         ResultSet rs = MySqlCon.Query("SELECT * FROM passenger JOIN identity_card on passenger.passenger_identityCard = identity_card.id_id JOIN ticket ON passenger.passenger_ticket_id = ticket.ticket_id JOIN luggage ON passenger.passenger_luggage_id = luggage.luggage_id JOIN flight ON ticket.ticket_flight_id = flight.flight_id");
         while (true) {

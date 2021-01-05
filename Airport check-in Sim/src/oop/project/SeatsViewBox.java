@@ -81,6 +81,14 @@ public class SeatsViewBox {
         tilePane.setPrefColumns(8);
         tilePane.setPrefRows(5);
 
+        Button legendButtonTaken = new Button("Taken");
+        legendButtonTaken.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        legendButtonTaken.setPrefWidth(50);
+        Button legendButtonFree = new Button("Free");
+        legendButtonFree.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
+        legendButtonFree.setPrefWidth(50);
+        tilePane.getChildren().addAll(legendButtonFree, legendButtonTaken);
+
 
         Button closeButton = new Button("Close the window");
         closeButton.setOnAction(e -> window.close());
