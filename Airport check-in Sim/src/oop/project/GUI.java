@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -183,32 +184,55 @@ public class GUI extends Application{
     private ObservableList<Passenger> getPassenger(){                                 ///for the table
 
 
-        gates.add(Main.queue1.poll());
-        gates.add(Main.queue2.poll());
-        gates.add(Main.queue3.poll());
-        gates.add(Main.queue4.poll());
-        gates.add(Main.queue5.poll());
-        gates.add(Main.queue6.poll());
-        gates.add(Main.queue7.poll());
-        gates.add(Main.queue8.poll());
-        gates.add(Main.queue9.poll());
-        gates.add(Main.queue10.poll());
+        gates.add(refreshQueue(Main.queue1));
+        gates.add(refreshQueue(Main.queue2));
+        gates.add(refreshQueue(Main.queue3));
+        gates.add(refreshQueue(Main.queue4));
+        gates.add(refreshQueue(Main.queue5));
+        gates.add(refreshQueue(Main.queue6));
+        gates.add(refreshQueue(Main.queue7));
+        gates.add(refreshQueue(Main.queue8));
+        gates.add(refreshQueue(Main.queue9));
+        gates.add(refreshQueue(Main.queue10));
         return gates;
     }
 
+    public Passenger refreshQueue(Queue<Passenger> queue){
+        if (queue.peek()!=null) {
+            if (queue.peek().getStatus() == PassengerStatus.IN_QUEUE) {
+                queue.peek().setStatus(PassengerStatus.AT_CHECK_IN);
+                return queue.peek();
+            } else if (queue.peek().getStatus() == PassengerStatus.AT_CHECK_IN) {
+                queue.peek().setStatus(PassengerStatus.CHECKING_DETAILS);
+                return queue.peek();
+            } else if (queue.peek().getStatus() == PassengerStatus.CHECKING_DETAILS) {
+                queue.peek().setStatus(PassengerStatus.WEIGHTING_LUGGAGE);
+                return queue.peek();
+            } else if (queue.peek().getStatus() == PassengerStatus.WEIGHTING_LUGGAGE) {
+                queue.peek().setStatus(PassengerStatus.MOVE_TROUGH_GATE);
+                return queue.peek();
+            } else if (queue.peek().getStatus() == PassengerStatus.MOVE_TROUGH_GATE) {
+                queue.peek().setStatus(PassengerStatus.IN_WAITING_ROOM);
+                return queue.peek();
+            } else if (queue.peek().getStatus() == PassengerStatus.IN_WAITING_ROOM) {
+                return queue.poll();
+            }
+        }
+        return queue.poll();
+    }
 
     public void refreshTable(){
         gates.clear();
-        gates.add(Main.queue1.poll());
-        gates.add(Main.queue2.poll());
-        gates.add(Main.queue3.poll());
-        gates.add(Main.queue4.poll());
-        gates.add(Main.queue5.poll());
-        gates.add(Main.queue6.poll());
-        gates.add(Main.queue7.poll());
-        gates.add(Main.queue8.poll());
-        gates.add(Main.queue9.poll());
-        gates.add(Main.queue10.poll());
+        gates.add(refreshQueue(Main.queue1));
+        gates.add(refreshQueue(Main.queue2));
+        gates.add(refreshQueue(Main.queue3));
+        gates.add(refreshQueue(Main.queue4));
+        gates.add(refreshQueue(Main.queue5));
+        gates.add(refreshQueue(Main.queue6));
+        gates.add(refreshQueue(Main.queue7));
+        gates.add(refreshQueue(Main.queue8));
+        gates.add(refreshQueue(Main.queue9));
+        gates.add(refreshQueue(Main.queue10));
         gatesTable.setItems(gates);
     }
 
