@@ -123,7 +123,7 @@ public class GUI extends Application{
 
         gatesTable = new TableView<>();
         gatesTable.setItems(gates);
-        gatesTable.getColumns().addAll(passengerId, passengerStatus);
+        gatesTable.getColumns().addAll(gateId, passengerId, passengerStatus);
 
         gatesTable.setOnMouseClicked(e -> {
 

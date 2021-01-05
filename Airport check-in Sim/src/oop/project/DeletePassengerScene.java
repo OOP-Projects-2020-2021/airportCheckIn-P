@@ -121,15 +121,8 @@ public class DeletePassengerScene {
             try {
                 choiceBoxPassengers.setValue(rs.getInt("passenger_id"));
                 choiceBoxPassengers.getItems().add(rs.getInt("passenger_id"));
-                /*choiceBoxPassengers.setValue("id:" + rs.getInt("passenger_id") + ", Name: " + rs.getString("id_first_name") + " " + rs.getString("id_last_name") +
-                        ", Flight: " + rs.getInt("ticket_flight_id") + ", Seat: " + rs.getInt("ticket_flight_seat"));
-                choiceBoxPassengers.getItems().add(("id:" + rs.getInt("passenger_id") + ", Name: " + rs.getString("id_first_name") + " " + rs.getString("id_last_name") +
-                        ", Flight: " + rs.getInt("ticket_flight_id") + ", Seat: " + rs.getInt("ticket_flight_seat")));
-                */while (rs.next())
+                while (rs.next())
                     choiceBoxPassengers.getItems().add(rs.getInt("passenger_id"));
-                    /*choiceBoxPassengers.getItems().add(("id:" + rs.getInt("passenger_id") + ", Name: " + rs.getString("id_first_name") + " " + rs.getString("id_last_name") +
-                            ", Flight: " + rs.getInt("ticket_flight_id") + ", Seat: " + rs.getInt("ticket_flight_seat")));*/
-
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
