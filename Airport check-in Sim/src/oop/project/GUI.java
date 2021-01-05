@@ -7,11 +7,14 @@ import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.scene.control.DatePicker;
@@ -31,19 +34,26 @@ public class GUI extends Application{
     Stage window;
     Scene scene1, sceneAddPassenger, sceneFlightSchedule, sceneUpdatePassenger, sceneDeletePassenger;
     boolean isFrozen = false;
-    Timeline timeline;
+    private Timeline timeline;
     Button pausePlayButton;
     TableView<Passenger> gatesTable;
+    final ObservableList<Passenger> gates = FXCollections.observableArrayList();
 
     public static void launchGUI() {
         launch();
     }
 
 
+
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         window = primaryStage;
         window.setTitle("Airport Check-In Simulator");
+
+        timeline = new Timeline(new KeyFrame(Duration.seconds(100)));
+        timeline.setCycleCount(Animation.INDEFINITE);
+
 
         HBox topMenu = new HBox();
         Button buttonAddPassenger = new Button("Add Passenger");
@@ -77,21 +87,45 @@ public class GUI extends Application{
 
 
 
+        //id column
+        TableColumn<Passenger, Integer> passengerId = new TableColumn<>("ID");
+        passengerId.setMaxWidth(100);
+        passengerId.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        //status
+        TableColumn<Passenger, PassengerStatus> passengerStatus = new TableColumn<>("Status");
+        passengerStatus.setMaxWidth(500);
+        passengerStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+
+
+        gatesTable = new TableView<>();
+        gatesTable.setItems(gates);
+        gatesTable.getColumns().addAll(passengerId, passengerStatus);
+
+
         borderPane1.setCenter(gatesTable);
 
         HBox bottomMenu = new HBox();
         pausePlayButton = new Button("Pause/Play");
         Button resetButton = new Button("Reset");
-         //resetButton.setOnAction(e -> reset());
+        resetButton.setOnAction(e -> reset());
 
-        //reset();
+        reset();
+
         bottomMenu.getChildren().addAll(pausePlayButton, resetButton);
         bottomMenu.setAlignment(Pos.CENTER);
         borderPane1.setBottom(bottomMenu);
 
         scene1 = new Scene(borderPane1, 600, 600);
 
-
+        /*scene1.addEventHandler(MouseEvent.MOUSE_ENTERED,
+                new EventHandler<MouseEvent>() {
+                    @Override public void handle(MouseEvent e) {
+                        resetTable();
+                    }
+                });*/
+        //resetTable();
 
 
         //Layout for adding more passengers
@@ -359,12 +393,12 @@ public class GUI extends Application{
         flightID.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         //departure time column
-        TableColumn<Flight, Date> flightDeparture = new TableColumn<>("Departure Time");
+        TableColumn<Flight, Timestamp> flightDeparture = new TableColumn<>("Departure Time");
         flightDeparture.setMaxWidth(500);
         flightDeparture.setCellValueFactory(new PropertyValueFactory<>("departureTime"));
 
         //arrival time column
-        TableColumn<Flight, Date> flightArrival = new TableColumn<>("Arrival Time");
+        TableColumn<Flight, Timestamp> flightArrival = new TableColumn<>("Arrival Time");
         flightArrival.setMaxWidth(500);
         flightArrival.setCellValueFactory(new PropertyValueFactory<>("arrivalTime"));
 
@@ -436,6 +470,7 @@ public class GUI extends Application{
             }
             try {
                 flights.add(new Flight(rs.getInt(1), rs.getTimestamp(2) ,rs.getTimestamp(3), rs.getString(4) ));
+
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
@@ -444,7 +479,7 @@ public class GUI extends Application{
         return flights;
     }
     private ObservableList<Passenger> getPassenger(){                                 ///for the table
-        ObservableList<Passenger> gates = FXCollections.observableArrayList();
+
 
         gates.add(Main.queue1.poll());
         gates.add(Main.queue2.poll());
@@ -459,39 +494,94 @@ public class GUI extends Application{
         return gates;
     }
 
-    /*private void reset(){
+    /*private void resetTable(){
+        timeline.play();
+        int t=10;
+        while(timeline.getCurrentTime().lessThanOrEqualTo(Duration.seconds(100))){
+            if (timeline.getCurrentTime() == Duration.seconds(t)) {
+                System.out.println(timeline.getCurrentTime());
+                System.out.println(t);
+                gatesTable.refresh();
+            }
+            t+=10;
+        }
+        timeline.stop();
+    }*/
+
+    public void refreshTable(){
+        gates.clear();
+        gates.add(Main.queue1.poll());
+        gates.add(Main.queue2.poll());
+        gates.add(Main.queue3.poll());
+        gates.add(Main.queue4.poll());
+        gates.add(Main.queue5.poll());
+        gates.add(Main.queue6.poll());
+        gates.add(Main.queue7.poll());
+        gates.add(Main.queue8.poll());
+        gates.add(Main.queue9.poll());
+        gates.add(Main.queue10.poll());
+        gatesTable.setItems(gates);
+    }
+
+    @FXML
+    private void stopSimulation() {
+        timeline.stop();
+    }
+    @FXML
+    private void pauseSimulation() {
+        timeline.pause();
+    }
+
+    @FXML
+    private void playSimulation() {
+        timeline.play();
+    }
+
+    @FXML
+    private void resetSimulation() {
+        timeline.jumpTo(Duration.ZERO);
+    }
+
+    private void reset(){
         if (timeline != null){
             timeline.stop();
         }
 
-        //simulation table
-        //id column
-        TableColumn<Passenger, Integer> passengerIdColumn = new TableColumn<>("ID");
-        passengerIdColumn.setMinWidth(100);
-        passengerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        gates.clear();
 
-        //status column
-        TableColumn<Passenger, PassengerStatus> passengerStatusColumn = new TableColumn<>("Status");
-        passengerStatusColumn.setMinWidth(400);
-        passengerStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-
-
-
-        gatesTable = new TableView<>();
-        gatesTable.setItems(getPassenger());
-        gatesTable.getColumns().addAll(passengerIdColumn, passengerStatusColumn);
-
-        timeline = new Timeline(new KeyFrame(Duration.seconds(2), e ->{
+        timeline = new Timeline(new KeyFrame(Duration.seconds(10), e ->{
             if(moreStepsToDo()) {
-                doNextStep();
+                refreshTable();
             }else {
                 timeline.stop();
             }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
 
-        pausePlayButton.disabledProperty().bind(Bindings.createBooleanBinding())
+        pausePlayButton.setOnAction(e -> {
+            if (timeline.getStatus() == Animation.Status.RUNNING){
+                timeline.pause();
+                System.out.println("paused");
+            }else{
+                timeline.play();
+                System.out.println("running");
+            }
+        });
 
     }
-    }*/
+    
+    private boolean moreStepsToDo(){
+        if (!Main.queue1.isEmpty()) return true;
+        if (!Main.queue2.isEmpty()) return true;
+        if (!Main.queue3.isEmpty()) return true;
+        if (!Main.queue4.isEmpty()) return true;
+        if (!Main.queue5.isEmpty()) return true;
+        if (!Main.queue6.isEmpty()) return true;
+        if (!Main.queue7.isEmpty()) return true;
+        if (!Main.queue8.isEmpty()) return true;
+        if (!Main.queue9.isEmpty()) return true;
+        if (!Main.queue10.isEmpty()) return true;
+        return false;
+    }
+
 }
