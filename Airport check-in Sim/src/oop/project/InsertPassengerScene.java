@@ -15,13 +15,20 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.control.DatePicker;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.sql.ResultSet;
@@ -43,6 +50,8 @@ public class InsertPassengerScene extends Parent {
 
         //First text
         Label text = new Label("Insert a new passenger");
+        text.setAlignment(Pos.CENTER);
+        text.setFont(new Font("Arial", 20));
         GridPane.setConstraints(text, 1, 0);
 
         //First Name
@@ -201,18 +210,6 @@ public class InsertPassengerScene extends Parent {
         });
 
 
-        /*choiceBoxFlights.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> {
-
-            String[] str = choiceBoxFlights.getValue().split(" ");
-            flightInput.set(Integer.parseInt(str[0]));
-
-
-            //Seat input
-
-
-
-        });*/
-
         GridPane.setConstraints(choiceBoxFlights, 1, 7);
         GridPane.setConstraints(choiceBoxSeats, 1, 11);
 
@@ -224,37 +221,39 @@ public class InsertPassengerScene extends Parent {
         Button savePassengerButton = new Button("Save Passenger");
         savePassengerButton.setOnAction(e -> {
             //save everything in the database
+            if(isNotEmpty(luggageWeightInput, firstNameInput, lastNameInput, birthDatePicker, addressInput, citizenshipInput)){
 
-            LocalDate value = birthDatePicker.getValue();
-            Date birthDateInput = java.sql.Date.valueOf( value );
-            int seatNumber = choiceBoxSeats.getSelectionModel().getSelectedItem();
-            //seatInput.set(choiceBoxSeats.getValue());                           //get the seat number
-            int queueNumber = choiceBoxFlights.getSelectionModel().getSelectedItem();                    //get the queue number
-            int luggageWeight=Integer.parseInt(luggageWeightInput.getText());   //get the luggage weight
+                LocalDate value = birthDatePicker.getValue();
+                Date birthDateInput = java.sql.Date.valueOf( value );
 
-            Passenger passenger = new Passenger(firstNameInput.getText(), lastNameInput.getText(), birthDateInput, addressInput.getText(),
-                    citizenshipInput.getText(), luggageWeight, choiceBoxFlights.getSelectionModel().getSelectedItem(),
-                    choiceBoxSeats.getSelectionModel().getSelectedItem(), queueNumber);
+                int queueNumber = choiceBoxFlights.getSelectionModel().getSelectedItem();                    //get the queue number
+                int luggageWeight=Integer.parseInt(luggageWeightInput.getText());   //get the luggage weight
 
-            Main.addToQueue(passenger, queueNumber);    // add passenger to queue
+                Passenger passenger = new Passenger(firstNameInput.getText(), lastNameInput.getText(), birthDateInput, addressInput.getText(),
+                        citizenshipInput.getText(), luggageWeight, choiceBoxFlights.getSelectionModel().getSelectedItem(),
+                        choiceBoxSeats.getSelectionModel().getSelectedItem(), queueNumber);
 
-            firstNameInput.clear();
-            lastNameInput.clear();
-            birthDatePicker.getEditor().clear();
-            birthDatePicker.setValue(null);
-            addressInput.clear();
-            citizenshipInput.clear();
-            luggageWeightInput.clear();
-            choiceBoxFlights.getSelectionModel().clearSelection();
-            choiceBoxSeats.getSelectionModel().clearSelection();
+                Main.addToQueue(passenger, queueNumber);    // add passenger to queue
 
-            window.setScene(scene1);
+                firstNameInput.clear();
+                lastNameInput.clear();
+                birthDatePicker.getEditor().clear();
+                birthDatePicker.setValue(null);
+                addressInput.clear();
+                citizenshipInput.clear();
+                luggageWeightInput.clear();
+                choiceBoxFlights.getSelectionModel().clearSelection();
+                choiceBoxSeats.getSelectionModel().clearSelection();
+
+                window.setScene(scene1);
+            }
         });
         GridPane.setConstraints(savePassengerButton, 1, 12);
 
         //cancel button
         Button cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> {
+            luggageWeightInput.setBackground(new Background(new BackgroundFill(Paint.valueOf("#ffffff"), CornerRadii.EMPTY, Insets.EMPTY )));
             firstNameInput.clear();
             lastNameInput.clear();
             birthDatePicker.getEditor().clear();
@@ -279,6 +278,51 @@ public class InsertPassengerScene extends Parent {
         sceneAddPassenger = new Scene(gridAddPassenger, 600, 600);
         return sceneAddPassenger;
     }
+
+    private static boolean isNotEmpty(TextField luggage, TextField firstNameInput, TextField lastNameInput, DatePicker birthDatePicker, TextField addressInput, TextField citizenshipInput) {
+        boolean empty = false;
+        if (!isInt(luggage, luggage.getText())){
+            empty = true;
+            luggage.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
+        }
+        if (firstNameInput.getText().isEmpty()){
+            empty = true;
+            firstNameInput.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
+        }
+        if (lastNameInput.getText().isEmpty()){
+            empty = true;
+            lastNameInput.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
+        }
+        if (birthDatePicker.getValue() == null){
+            empty = true;
+            birthDatePicker.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
+        }
+        if (addressInput.getText().isEmpty()){
+            empty = true;
+            addressInput.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
+        }
+        if (citizenshipInput.getText().isEmpty()){
+            empty = true;
+            citizenshipInput.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
+        }
+        if (empty) return false;
+        return true;
+    }
+
+    private static boolean isInt(TextField input, String message){
+        try{
+            int number = Integer.parseInt(message);
+            if(number<=0){
+                input.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
+                return false;
+            }
+            return true;
+        }catch(NumberFormatException e){
+            input.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
+            return false;
+        }
+    }
+
 
     @Override
     public Node getStyleableNode() {

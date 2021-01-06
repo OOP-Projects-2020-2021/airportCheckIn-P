@@ -13,12 +13,18 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.control.DatePicker;
 import javafx.util.Duration;
+
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -59,6 +65,9 @@ public class GUI extends Application{
 
 
         HBox topMenu = new HBox();
+        topMenu.setAlignment(Pos.CENTER);
+        topMenu.setPadding(new Insets(10, 10, 10, 10));
+
         Button buttonAddPassenger = new Button("Add Passenger");
         buttonAddPassenger.setOnAction(e -> {
             if (timeline.getStatus() == Animation.Status.RUNNING) {
@@ -100,12 +109,28 @@ public class GUI extends Application{
         Button buttonFlightSchedule = new Button("Flights Schedule");
         buttonFlightSchedule.setOnAction(e -> window.setScene(sceneFlightSchedule));
 
-        topMenu.getChildren().addAll(buttonAddPassenger, buttonUpdatePassenger, buttonDeletePassenger, buttonFlightSchedule);
+        topMenu.getChildren().addAll(buttonAddPassenger, buttonDeletePassenger, buttonFlightSchedule);
 
         BorderPane borderPane1 = new BorderPane();
         borderPane1.setTop(topMenu);
 
 
+        GridPane gridTables = new GridPane();
+        gridTables.setPadding( new Insets(20, 20, 20, 20)); //padding for the grid margins
+        gridTables.setVgap(10);//set vertical spacing between cells
+        gridTables.setVgap(10); //horizontal spacing
+
+
+        //titles
+        Label gatesTableTitle = new Label("Passengers status");
+        gatesTableTitle.setAlignment(Pos.CENTER);
+        gatesTableTitle.setFont(new Font("Arial", 20));
+        GridPane.setConstraints(gatesTableTitle, 0, 0);
+
+        Label luggageTableTitle = new Label("Luggage status");
+        luggageTableTitle.setAlignment(Pos.CENTER);
+        luggageTableTitle.setFont(new Font("Arial", 20));
+        GridPane.setConstraints(luggageTableTitle, 1, 0);
 
         //gate column
         TableColumn<Passenger, Integer> gateId = new TableColumn<>("Gate");
@@ -119,7 +144,7 @@ public class GUI extends Application{
 
         //status
         TableColumn<Passenger, PassengerStatus> passengerStatus = new TableColumn<>("Status");
-        passengerStatus.setMaxWidth(500);
+        passengerStatus.setPrefWidth(160);
         passengerStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
 
@@ -135,12 +160,14 @@ public class GUI extends Application{
         });
 
 
-        //gate column
+        GridPane.setConstraints(gatesTable, 0, 1);
+
+        //id column
         TableColumn<Luggage, Integer> luggageId = new TableColumn<>("ID");
         luggageId.setMaxWidth(100);
         luggageId.setCellValueFactory(new PropertyValueFactory<>("luggageId"));
 
-        //id column
+        //weight column
         TableColumn<Luggage, Integer> luggageWeight = new TableColumn<>("Weight");
         luggageWeight.setMaxWidth(100);
         luggageWeight.setCellValueFactory(new PropertyValueFactory<>("weight"));
@@ -156,13 +183,16 @@ public class GUI extends Application{
         luggageTableView.setItems(luggages);
         luggageTableView.getColumns().addAll(luggageId, luggageWeight, luggageStatus);
 
-        HBox tablesHBox = new HBox();
-        tablesHBox.getChildren().addAll(gatesTable, luggageTableView);
+        GridPane.setConstraints(luggageTableView, 1, 1);
 
-        borderPane1.setCenter(tablesHBox);
+
+        gridTables.getChildren().addAll(gatesTableTitle, luggageTableTitle, gatesTable, luggageTableView);
+
+        borderPane1.setCenter(gridTables);
 
         HBox bottomMenu = new HBox();
-        pausePlayButton = new Button("Pause/Play");
+        pausePlayButton = new Button("Play");
+        pausePlayButton.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN,  new CornerRadii(2), Insets.EMPTY)));
         Button stopButton = new Button("Stop");
         stopButton.setOnAction(e -> timeline.stop());
         Button resetButton = new Button("Reset");
@@ -172,6 +202,8 @@ public class GUI extends Application{
 
         bottomMenu.getChildren().addAll(pausePlayButton, resetButton);
         bottomMenu.setAlignment(Pos.CENTER);
+        bottomMenu.setPadding(new Insets(20, 20, 20, 20));
+        bottomMenu.setSpacing(10);
         borderPane1.setBottom(bottomMenu);
 
         scene1 = new Scene(borderPane1, 600, 600);
@@ -325,28 +357,13 @@ public class GUI extends Application{
 
     }
 
-    @FXML
-    private void stopSimulation() {
-        timeline.stop();
-    }
-    @FXML
-    private void pauseSimulation() {
-        timeline.pause();
-    }
 
-    @FXML
-    private void playSimulation() {
-        timeline.play();
-    }
-
-    @FXML
-    private void resetSimulation() {
-        timeline.jumpTo(Duration.ZERO);
-    }
 
     private void reset(){
         if (timeline != null){
             timeline.stop();
+            pausePlayButton.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN,  new CornerRadii(2), Insets.EMPTY)));
+            pausePlayButton.setText("Play");
         }
 
         gates.clear();
@@ -368,9 +385,13 @@ public class GUI extends Application{
         pausePlayButton.setOnAction(e -> {
             if (timeline.getStatus() == Animation.Status.RUNNING){
                 timeline.pause();
+                pausePlayButton.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN,  new CornerRadii(2), Insets.EMPTY)));
+                pausePlayButton.setText("Play");
                 System.out.println("paused");
             }else{
                 timeline.play();
+                pausePlayButton.setBackground(new Background(new BackgroundFill(Color.ORANGE,  new CornerRadii(2), Insets.EMPTY)));
+                pausePlayButton.setText("Pause");
                 System.out.println("running");
             }
         });
