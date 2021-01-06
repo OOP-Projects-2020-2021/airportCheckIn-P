@@ -154,9 +154,9 @@ public class GUI extends Application{
         gatesTable.getColumns().addAll(gateId, passengerId, passengerStatus);
 
         gatesTable.setOnMouseClicked(e -> {
-
-            PassengerDetailsBox.display(gatesTable.getSelectionModel().getSelectedItem());
-            //AlertBox.display("It works", "yey");
+            if (gatesTable.getSelectionModel().getSelectedItem()!=null){
+                PassengerDetailsBox.display(gatesTable.getSelectionModel().getSelectedItem());
+            }
         });
 
 

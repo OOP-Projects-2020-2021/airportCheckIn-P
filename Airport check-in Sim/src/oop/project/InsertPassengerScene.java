@@ -154,59 +154,57 @@ public class InsertPassengerScene extends Parent {
 
 
 
-        //AtomicInteger flightInput = new AtomicInteger();
-        //AtomicInteger seatInput = new AtomicInteger();
         //seat
         Label seatLabel = new Label("Seat");
         GridPane.setConstraints(seatLabel, 0, 11);
         ChoiceBox<Integer> choiceBoxSeats = new ChoiceBox<>();
 
         choiceBoxFlights.setOnAction(e ->{
-            ResultSet rs2 = MySqlCon.Query("SELECT * FROM flight where flight_id = " + choiceBoxFlights.getSelectionModel().getSelectedItem());
-            try {
-                rs2.next();
-                departureInput.setText(rs2.getString("flight_departure"));
-                arrivalInput.setText(rs2.getString("flight_arrival"));
-                destinationInput.setText(rs2.getString("flight_destination"));
+            if (choiceBoxFlights.getSelectionModel().getSelectedItem()!=null) {
+                ResultSet rs2 = MySqlCon.Query("SELECT * FROM flight where flight_id = " + choiceBoxFlights.getSelectionModel().getSelectedItem());
+                try {
+                    rs2.next();
+                    departureInput.setText(rs2.getString("flight_departure"));
+                    arrivalInput.setText(rs2.getString("flight_arrival"));
+                    destinationInput.setText(rs2.getString("flight_destination"));
 
-                choiceBoxSeats.getSelectionModel().clearSelection();
-                choiceBoxSeats.getItems().clear();
+                    choiceBoxSeats.getSelectionModel().clearSelection();
+                    choiceBoxSeats.getItems().clear();
 
-                ResultSet rs3 = MySqlCon.Query("select ticket_flight_seat from ticket where ticket_flight_id = "+choiceBoxFlights.getSelectionModel().getSelectedItem());
-                Boolean[] visitedSeats = new Boolean[41];
-                Arrays.fill(visitedSeats, Boolean.FALSE);
-                while (true) {
-                    try {
-                        if (!rs3.next()) break;
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
+                    ResultSet rs3 = MySqlCon.Query("select ticket_flight_seat from ticket where ticket_flight_id = " + choiceBoxFlights.getSelectionModel().getSelectedItem());
+                    Boolean[] visitedSeats = new Boolean[41];
+                    Arrays.fill(visitedSeats, Boolean.FALSE);
+                    while (true) {
+                        try {
+                            if (!rs3.next()) break;
+                        } catch (SQLException throwables) {
+                            throwables.printStackTrace();
+                        }
+                        try {
+                            visitedSeats[rs3.getInt("ticket_flight_seat")] = Boolean.TRUE;
+                        } catch (SQLException throwables) {
+                            throwables.printStackTrace();
+                        }
                     }
-                    try {
-                        visitedSeats[rs3.getInt("ticket_flight_seat")] = Boolean.TRUE;
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
+
+                    int defaultValue = -1;
+                    for (int i = 1; i < 41; i++) {
+                        if (visitedSeats[i] == Boolean.FALSE) {
+                            choiceBoxSeats.getItems().add(i);
+                            if (defaultValue == -1)
+                                defaultValue = i;
+                        }
                     }
+                    //set default value
+                    choiceBoxSeats.setValue(defaultValue);
+                    //seatInput.set(choiceBoxSeats.getValue());
+                    //GridPane.setConstraints(choiceBoxSeats, 1, 11);
+
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
                 }
 
-                int defaultValue = -1;
-                for (int i=1; i<41; i++)
-                {
-                    if (visitedSeats[i] == Boolean.FALSE){
-                        choiceBoxSeats.getItems().add(i);
-                        if (defaultValue == -1)
-                            defaultValue = i;
-                    }
-                }
-                //set default value
-                choiceBoxSeats.setValue(defaultValue);
-                //seatInput.set(choiceBoxSeats.getValue());
-                //GridPane.setConstraints(choiceBoxSeats, 1, 11);
-
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
             }
-
-
         });
 
 

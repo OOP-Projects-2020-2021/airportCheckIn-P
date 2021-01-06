@@ -54,11 +54,12 @@ public class SeatsViewBox {
                 button.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
             else{
                 button.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
-                ResultSet rs = MySqlCon.Query("SELECT * FROM passenger JOIN identity_card on passenger.passenger_identityCard = identity_card.id_id JOIN ticket ON passenger.passenger_ticket_id = ticket.ticket_id JOIN luggage ON passenger.passenger_luggage_id = luggage.luggage_id JOIN flight ON ticket.ticket_flight_id = flight.flight_id WHERE flight_id = "
-                + flight.getId()+ " AND ticket_flight_seat = " +i);
 
+                final int seat = i;
                 button.setOnAction(e -> {
                     try {
+                        ResultSet rs = MySqlCon.Query("SELECT * FROM passenger JOIN identity_card on passenger.passenger_identityCard = identity_card.id_id JOIN ticket ON passenger.passenger_ticket_id = ticket.ticket_id JOIN luggage ON passenger.passenger_luggage_id = luggage.luggage_id JOIN flight ON ticket.ticket_flight_id = flight.flight_id WHERE flight_id = "
+                                + flight.getId()+ " AND ticket_flight_seat = " +seat);
                         rs.next();
                         PassengerDetailsBox.display(new Passenger(rs.getInt("passenger_id"), rs.getInt("identity_card.id_id"), rs.getInt("ticket.ticket_id"),
                                 rs.getInt("luggage.luggage_id"), rs.getString("id_first_name"), rs.getString("id_last_name"),
