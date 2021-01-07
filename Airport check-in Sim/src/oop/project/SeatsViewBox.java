@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -25,6 +26,8 @@ public class SeatsViewBox {
 
         Label label = new Label();
         label.setText("Seats in the plane flight id " + flight.getId());
+        label.setAlignment(Pos.CENTER);
+        label.setFont(new Font("Arial", 20));
 
         //Create TilePane
         TilePane tilePane = new TilePane();

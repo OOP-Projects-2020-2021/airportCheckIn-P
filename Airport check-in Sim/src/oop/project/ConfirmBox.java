@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -19,9 +20,10 @@ public class ConfirmBox {
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL); //block interactions with other window until this is closed
         window.setTitle(title);
-        window.setMinWidth(250);
+
         Label label = new Label();
         label.setText(message);
+
 
         //create 2 buttons
         Button yesButton = new Button(button1Text);
@@ -39,7 +41,7 @@ public class ConfirmBox {
         VBox layout = new VBox(10);
         layout.getChildren().addAll(label, yesButton, noButton);
         layout.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(layout);
+        Scene scene = new Scene(layout, 280, 100);
         window.setScene(scene);
         window.showAndWait();
 

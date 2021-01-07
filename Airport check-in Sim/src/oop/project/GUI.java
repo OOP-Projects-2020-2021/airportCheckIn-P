@@ -83,7 +83,7 @@ public class GUI extends Application{
         Button buttonDeletePassenger = new Button("Delete Passenger");
         buttonDeletePassenger.setOnAction(e -> {
             if (timeline.getStatus() == Animation.Status.RUNNING) {
-                boolean result = ConfirmBox.display("Warning", "You have to stop the simulation first?", "Yes, please", "No, thank you!");
+                boolean result = ConfirmBox.display("Warning", "Would you like to stop the simulation first?", "Yes, please", "No, thank you!");
                 if (result == true){
                     timeline.stop();
                     System.out.println("stopped");
