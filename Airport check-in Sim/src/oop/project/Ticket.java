@@ -1,7 +1,6 @@
 package oop.project;
 
 public class Ticket {
-    private Flight flight;
     private int seat;
     private int flightId;
     int id;
@@ -10,7 +9,6 @@ public class Ticket {
         MySqlCon.updateDB("INSERT INTO ticket (ticket_flight_id, ticket_flight_seat) VALUES ('" +flight+"', '"+seat+"');");
         this.seat = seat;
         this.flightId = flight;
-        //something with flight too
     }
     public Ticket(int id, int flight, int seat){
         this.seat = seat;

@@ -1,14 +1,4 @@
 package oop.project;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,24 +8,16 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.control.DatePicker;
-import javafx.util.Duration;
-
-import java.awt.*;
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class InsertPassengerScene extends Parent {
 
@@ -98,13 +80,31 @@ public class InsertPassengerScene extends Parent {
 
 
 
-        //citizenship
-        Label citizenshipLabel = new Label("Citizenship");
+        //nationality
+        Label citizenshipLabel = new Label("Nationality");
         GridPane.setConstraints(citizenshipLabel, 0, 5);
         //.Name input
-        TextField citizenshipInput = new TextField();
-        citizenshipInput.setPromptText("citizenship");
-        GridPane.setConstraints(citizenshipInput, 1, 5);
+        ChoiceBox<String> choiceBoxNationality = new ChoiceBox<>();
+        ResultSet rs0 = MySqlCon.Query("select nationality from countries");
+        //set default value
+        while (true) {
+            try {
+                if (!rs0.next()) break;
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            try {
+
+                choiceBoxNationality.setValue(rs0.getString("nationality"));
+                choiceBoxNationality.getItems().add(rs0.getString("nationality"));
+                while (rs0.next())
+                    choiceBoxNationality.getItems().add(rs0.getString("nationality"));
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        GridPane.setConstraints(choiceBoxNationality, 1, 5);
 
         //luggage
         Label luggageWeightLabel = new Label("Luggage Weight");
@@ -206,9 +206,6 @@ public class InsertPassengerScene extends Parent {
                     }
                     //set default value
                     choiceBoxSeats.setValue(defaultValue);
-                    //seatInput.set(choiceBoxSeats.getValue());
-                    //GridPane.setConstraints(choiceBoxSeats, 1, 11);
-
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
@@ -228,7 +225,7 @@ public class InsertPassengerScene extends Parent {
         Button savePassengerButton = new Button("Save Passenger");
         savePassengerButton.setOnAction(e -> {
             //save everything in the database
-            if(isNotEmpty(luggageWeightInput, firstNameInput, lastNameInput, birthDatePicker, addressInput, citizenshipInput,
+            if(isNotEmpty(luggageWeightInput, firstNameInput, lastNameInput, birthDatePicker, addressInput, choiceBoxNationality.getSelectionModel().getSelectedItem(),
                     choiceBoxFlights.getSelectionModel().getSelectedItem(), choiceBoxSeats.getSelectionModel().getSelectedItem())){
 
                 LocalDate value = birthDatePicker.getValue();
@@ -238,7 +235,7 @@ public class InsertPassengerScene extends Parent {
                 int luggageWeight=Integer.parseInt(luggageWeightInput.getText());   //get the luggage weight
 
                 Passenger passenger = new Passenger(firstNameInput.getText(), lastNameInput.getText(), birthDateInput, addressInput.getText(),
-                        citizenshipInput.getText(), luggageWeight, choiceBoxFlights.getSelectionModel().getSelectedItem(),
+                choiceBoxNationality.getSelectionModel().getSelectedItem(), luggageWeight, choiceBoxFlights.getSelectionModel().getSelectedItem(),
                         choiceBoxSeats.getSelectionModel().getSelectedItem(), queueNumber);
 
                 Main.addToQueue(passenger, queueNumber);    // add passenger to queue
@@ -248,7 +245,7 @@ public class InsertPassengerScene extends Parent {
                 birthDatePicker.getEditor().clear();
                 birthDatePicker.setValue(null);
                 addressInput.clear();
-                citizenshipInput.clear();
+                choiceBoxNationality.getSelectionModel().clearSelection();
                 luggageWeightInput.clear();
                 choiceBoxFlights.getSelectionModel().clearSelection();
                 choiceBoxSeats.getSelectionModel().clearSelection();
@@ -268,7 +265,7 @@ public class InsertPassengerScene extends Parent {
             birthDatePicker.getEditor().clear();
             birthDatePicker.setValue(null);
             addressInput.clear();
-            citizenshipInput.clear();
+            choiceBoxNationality.getSelectionModel().clearSelection();
             luggageWeightInput.clear();
             choiceBoxFlights.getSelectionModel().clearSelection();
             choiceBoxSeats.getSelectionModel().clearSelection();
@@ -279,7 +276,7 @@ public class InsertPassengerScene extends Parent {
         GridPane.setConstraints(cancelButton, 2, 12);
 
         gridAddPassenger.getChildren().addAll(text, firstNameLabel, firstNameInput, lastNameLabel, lastNameInput,
-                addressLabel, addressInput, birthDateLabel, birthDatePicker, citizenshipLabel, citizenshipInput,
+                addressLabel, addressInput, birthDateLabel, birthDatePicker, citizenshipLabel, choiceBoxNationality,
                 luggageWeightLabel, luggageWeightInput, flightLabel, choiceBoxFlights, departureLabel, departureInput,
                 arrivalLabel, arrivalInput, destinationLabel, destinationInput, seatLabel, choiceBoxSeats,
                 savePassengerButton, cancelButton);
@@ -292,7 +289,8 @@ public class InsertPassengerScene extends Parent {
 
 
 
-    private static boolean isNotEmpty(TextField luggage, TextField firstNameInput, TextField lastNameInput, DatePicker birthDatePicker, TextField addressInput, TextField citizenshipInput, Integer selectedItem, Integer selectedItem1) {
+
+    private static boolean isNotEmpty(TextField luggage, TextField firstNameInput, TextField lastNameInput, DatePicker birthDatePicker, TextField addressInput, String nationality, Integer selectedItem, Integer selectedItem1) {
         boolean empty = false;
         if (!isInt(luggage, luggage.getText())){
             GridPane.setConstraints(warning[5], 2, 6);
@@ -319,7 +317,7 @@ public class InsertPassengerScene extends Parent {
             gridAddPassenger.getChildren().add(warning[2]);
             empty = true;
         }
-        if (citizenshipInput.getText().isEmpty()){
+        if (nationality == null){
             GridPane.setConstraints(warning[4], 2, 5);
             gridAddPassenger.getChildren().add(warning[4]);
             empty = true;

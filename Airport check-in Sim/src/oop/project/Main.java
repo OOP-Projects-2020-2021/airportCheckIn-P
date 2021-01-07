@@ -1,41 +1,29 @@
 package oop.project;
 
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
 public class Main{
-    public static Queue<Passenger> queue1 = new ArrayDeque<>();
-    public static Queue<Passenger> queue2 = new ArrayDeque<>();
-    public static Queue<Passenger> queue3 = new ArrayDeque<>();
-    public static Queue<Passenger> queue4 = new ArrayDeque<>();
-    public static Queue<Passenger> queue5 = new ArrayDeque<>();
-    public static Queue<Passenger> queue6 = new ArrayDeque<>();
-    public static Queue<Passenger> queue7 = new ArrayDeque<>();
-    public static Queue<Passenger> queue8 = new ArrayDeque<>();
-    public static Queue<Passenger> queue9 = new ArrayDeque<>();
-    public static Queue<Passenger> queue10 = new ArrayDeque<>();
+    public static ArrayList<Queue> queue = new ArrayList<>();
 
     public static void main(String[] args){
-	// write your code here
 
         MySqlCon.mySqlConnect();
-        //Main.initQueue();
+        Main.declareQueue();
         GUI.launchGUI();
         MySqlCon.mySqlDisconnect();
     }
+    private static void declareQueue(){
+        for (int i=0; i<=10; i++) {
+            Queue<Passenger> tempQ = new ArrayDeque<>();
+            queue.add(tempQ);
+        }
+    }
     private static void clearQueue(){
-        queue1.clear();
-        queue2.clear();
-        queue3.clear();
-        queue4.clear();
-        queue5.clear();
-        queue6.clear();
-        queue7.clear();
-        queue8.clear();
-        queue9.clear();
-        queue10.clear();
+        for (int i=1; i<=10; i++){
+            queue.get(i).clear();
+        }
     }
     public static void initQueue(){
 
@@ -62,35 +50,6 @@ public class Main{
         }
     }
     public static void addToQueue(Passenger passenger, int index){
-        if (index==1){
-            queue1.add(passenger);
-        }
-        if (index==2){
-            queue3.add(passenger);
-        }
-        if (index==3){
-            queue2.add(passenger);
-        }
-        if (index==4){
-            queue4.add(passenger);
-        }
-        if (index==5){
-            queue5.add(passenger);
-        }
-        if (index==6){
-            queue6.add(passenger);
-        }
-        if (index==7){
-            queue7.add(passenger);
-        }
-        if (index==8){
-            queue8.add(passenger);
-        }
-        if (index==9){
-            queue9.add(passenger);
-        }
-        if (index==10){
-            queue10.add(passenger);
-        }
+        queue.get(index).add(passenger);
     }
 }

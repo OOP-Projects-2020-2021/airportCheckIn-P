@@ -22,7 +22,6 @@ public class SeatsViewBox {
 
         window.initModality(Modality.APPLICATION_MODAL); //block interactions with other window until this is closed
         window.setTitle("Plane seats");
-        //window.setMinWidth(400);
 
         Label label = new Label();
         label.setText("Seats in the plane flight id " + flight.getId());

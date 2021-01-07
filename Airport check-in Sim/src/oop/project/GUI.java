@@ -11,7 +11,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -28,7 +27,6 @@ public class GUI extends Application{
     private Stage window;
     private Scene sceneAddPassenger;
     private Scene sceneFlightSchedule;
-    private Scene sceneUpdatePassenger;
     private Scene sceneDeletePassenger;
 
     private Timeline timeline;
@@ -71,15 +69,7 @@ public class GUI extends Application{
                 window.setScene(sceneAddPassenger);
             }
         });
-        Button buttonUpdatePassenger = new Button("Update Passenger");
-        /*buttonUpdatePassenger.setOnAction(e -> {
-            boolean result;
-            if (isFrozen == false) {
-                result = ConfirmBox.display("Error", "Please, freeze everything first!", "Ok, Freeze", "No, thank you");
-                isFrozen = true;    ///need to implement
-            }
-            window.setScene(sceneUpdatePassenger);
-        });*/
+
         Button buttonDeletePassenger = new Button("Delete Passenger");
         buttonDeletePassenger.setOnAction(e -> {
             if (timeline.getStatus() == Animation.Status.RUNNING) {
@@ -87,6 +77,8 @@ public class GUI extends Application{
                 if (result == true){
                     timeline.stop();
                     System.out.println("stopped");
+                    pausePlayButton.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN,  new CornerRadii(2), Insets.EMPTY)));
+                    pausePlayButton.setText("Play");
                     window.setScene(sceneDeletePassenger);
                     reset();
                 }
@@ -243,16 +235,9 @@ public class GUI extends Application{
 
     private void refreshTable(){
         gates.clear();
-        gates.add(refreshQueue(Main.queue1));
-        gates.add(refreshQueue(Main.queue2));
-        gates.add(refreshQueue(Main.queue3));
-        gates.add(refreshQueue(Main.queue4));
-        gates.add(refreshQueue(Main.queue5));
-        gates.add(refreshQueue(Main.queue6));
-        gates.add(refreshQueue(Main.queue7));
-        gates.add(refreshQueue(Main.queue8));
-        gates.add(refreshQueue(Main.queue9));
-        gates.add(refreshQueue(Main.queue10));
+        for (int i=1; i<=10; i++){
+            gates.add(refreshQueue(Main.queue.get(i)));
+        }
         gatesTable.setItems(gates);
     }
     private Luggage refreshLuggage(Passenger passenger){
@@ -269,42 +254,11 @@ public class GUI extends Application{
     }
     private void refreshLuggageTable(){
         luggage.clear();
-        if (Main.queue1.peek() != null){
-            luggage.add(refreshLuggage(Main.queue1.peek()));
-        }else luggage.add(null);
-
-        if (Main.queue2.peek() != null){
-            luggage.add(refreshLuggage(Main.queue2.peek()));
-        }else luggage.add(null);
-
-        if (Main.queue3.peek() != null){
-            luggage.add(refreshLuggage(Main.queue3.peek()));
-        }else luggage.add(null);
-
-        if (Main.queue4.peek() != null){
-            luggage.add(refreshLuggage(Main.queue4.peek()));
-        }else luggage.add(null);
-
-        if (Main.queue5.peek() != null){
-            luggage.add(refreshLuggage(Main.queue5.peek()));
-        }else luggage.add(null);
-
-        if (Main.queue6.peek() != null){
-            luggage.add(refreshLuggage(Main.queue6.peek()));
-        }else luggage.add(null);
-        if (Main.queue7.peek() != null){
-            luggage.add(refreshLuggage(Main.queue7.peek()));
-        }else luggage.add(null);
-        if (Main.queue8.peek() != null){
-            luggage.add(refreshLuggage(Main.queue8.peek()));
-        }else luggage.add(null);
-        if (Main.queue9.peek() != null){
-            luggage.add(refreshLuggage(Main.queue9.peek()));
-        }else luggage.add(null);
-        if (Main.queue10.peek() != null){
-            luggage.add(refreshLuggage(Main.queue10.peek()));
-        }else luggage.add(null);
-
+        for (int i=1; i<=10; i++){
+            if (Main.queue.get(i).peek() != null){
+                luggage.add(refreshLuggage((oop.project.Passenger)Main.queue.get(i).peek()));
+            }else luggage.add(null);
+        }
     }
 
 
@@ -349,16 +303,10 @@ public class GUI extends Application{
     }
 
     private boolean moreStepsToDo(){
-        if (!Main.queue1.isEmpty()) return true;
-        if (!Main.queue2.isEmpty()) return true;
-        if (!Main.queue3.isEmpty()) return true;
-        if (!Main.queue4.isEmpty()) return true;
-        if (!Main.queue5.isEmpty()) return true;
-        if (!Main.queue6.isEmpty()) return true;
-        if (!Main.queue7.isEmpty()) return true;
-        if (!Main.queue8.isEmpty()) return true;
-        if (!Main.queue9.isEmpty()) return true;
-        if (!Main.queue10.isEmpty()) return true;
+        for (int i=1; i<=10; i++){
+            if (!Main.queue.get(i).isEmpty())
+                return true;
+        }
         return false;
     }
 

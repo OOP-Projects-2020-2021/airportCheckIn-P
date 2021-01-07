@@ -1,6 +1,5 @@
 package oop.project;
 
-import java.sql.SQLException;
 import java.sql.Date;
 import java.util.Random;
 

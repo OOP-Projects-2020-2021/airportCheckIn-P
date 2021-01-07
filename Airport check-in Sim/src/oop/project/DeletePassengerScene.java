@@ -5,17 +5,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class DeletePassengerScene {
 
@@ -25,7 +19,7 @@ public class DeletePassengerScene {
 
 
     public static Scene display(Stage window, Scene scene1){
-        //Layout for adding more passengers
+        //Layout for deleting more passengers
         GridPane gridDeletePassenger = new GridPane();
         gridDeletePassenger.setPadding( new Insets(10, 10, 10, 10)); //padding for the grid margins
         gridDeletePassenger.setVgap(8);//set vertical spacing between cells

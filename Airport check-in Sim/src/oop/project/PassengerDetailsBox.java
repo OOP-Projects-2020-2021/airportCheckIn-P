@@ -5,15 +5,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class PassengerDetailsBox {
     public static void display( Passenger passenger){
@@ -115,9 +110,7 @@ public class PassengerDetailsBox {
         gridviewPassenger.getChildren().addAll(text, firstNameLabel, firstNameInput, lastNameLabel, lastNameInput, addressLabel, addressInput,
                 birthDateLabel, birthDateInput, citizenshipLabel, citizenshipInput, luggageWeightLabel, luggageWeightInput,
                 flightLabel, flightInput, seatLabel, seatInput, closeButton);
-        /*VBox layout = new VBox(10);
-        layout.getChildren().addAll( closeButton);
-        layout.setAlignment(Pos.CENTER);*/
+
 
         Scene scene = new Scene( gridviewPassenger, 400, 400);
         window.setScene(scene);
