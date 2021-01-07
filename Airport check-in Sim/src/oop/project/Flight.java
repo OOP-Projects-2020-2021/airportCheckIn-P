@@ -9,8 +9,7 @@ public class Flight {
     private Timestamp arrivalTime;
     private String destination;
 
-    public Flight() {
-    }
+
     public Flight(Integer id, Timestamp departureTime, Timestamp arrivalTime, String destination){
         this.id = id;
         this.departureTime = departureTime;

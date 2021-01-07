@@ -5,19 +5,19 @@ import java.sql.Date;
 import java.util.Random;
 
 public class Passenger {
-    private Ticket ticket;
-    private IdentityCard identityCard; //think about it
-    private Luggage luggage;
+    private final Ticket ticket;
+    private final IdentityCard identityCard;
+    private final Luggage luggage;
     private PassengerStatus status;
     private Integer queueNumber;
     private Integer id;
-    private int gateTime;
+    private final int gateTime;
     private int startGateTime;
-    private int checkDetailsTime;
+    private final int checkDetailsTime;
     private int startCheckDetailsTime;
-    private int weightLuggageTime;
+    private final int weightLuggageTime;
     private int startWeightLuggageTime;
-    private int moveThroughGateTime;
+    private final int moveThroughGateTime;
     private int startMoveThroughGateTime;
     private final int inWaitingRoomTime = 1;
     private int startInWaitingRoomTime;

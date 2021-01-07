@@ -3,8 +3,8 @@ package oop.project;
 import java.util.Random;
 
 public class Luggage {
-    private int weight;
-    private int luggageId; //must look again
+    private final int weight;
+    private int luggageId;
     private LuggageStatus status;
 
     public Luggage(int weight)

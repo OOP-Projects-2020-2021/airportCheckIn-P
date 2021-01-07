@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -31,7 +32,9 @@ public class PassengerDetailsBox {
         gridviewPassenger.setVgap(10); //horizontal spacing
 
         //First text
-        Label text = new Label("Insert a new passenger");
+        Label text = new Label("Passenger details");
+        text.setAlignment(Pos.CENTER);
+        text.setFont(new Font("Arial", 20));
         GridPane.setConstraints(text, 1, 0);
 
         //First Name

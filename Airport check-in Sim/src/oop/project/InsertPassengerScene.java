@@ -40,13 +40,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class InsertPassengerScene extends Parent {
 
     private static Scene sceneAddPassenger;
+    private static GridPane gridAddPassenger;
+    private static Label[] warning;
 
     public static Scene display(Stage window, Scene scene1){
         //Layout for adding more passengers
-        GridPane gridAddPassenger = new GridPane();
+        gridAddPassenger = new GridPane();
         gridAddPassenger.setPadding( new Insets(10, 10, 10, 10)); //padding for the grid margins
         gridAddPassenger.setVgap(8);//set vertical spacing between cells
         gridAddPassenger.setVgap(10); //horizontal spacing
+
+        String message = new String("Please insert a valid Input!");
+        warning = new Label[10];
+        for (int i=0; i<warning.length; i++){
+            warning[i] = new Label(message);
+            warning[i].setTextFill(Color.RED);
+        }
 
         //First text
         Label text = new Label("Insert a new passenger");
@@ -219,7 +228,8 @@ public class InsertPassengerScene extends Parent {
         Button savePassengerButton = new Button("Save Passenger");
         savePassengerButton.setOnAction(e -> {
             //save everything in the database
-            if(isNotEmpty(luggageWeightInput, firstNameInput, lastNameInput, birthDatePicker, addressInput, citizenshipInput)){
+            if(isNotEmpty(luggageWeightInput, firstNameInput, lastNameInput, birthDatePicker, addressInput, citizenshipInput,
+                    choiceBoxFlights.getSelectionModel().getSelectedItem(), choiceBoxSeats.getSelectionModel().getSelectedItem())){
 
                 LocalDate value = birthDatePicker.getValue();
                 Date birthDateInput = java.sql.Date.valueOf( value );
@@ -243,6 +253,7 @@ public class InsertPassengerScene extends Parent {
                 choiceBoxFlights.getSelectionModel().clearSelection();
                 choiceBoxSeats.getSelectionModel().clearSelection();
 
+                removeWarnings();
                 window.setScene(scene1);
             }
         });
@@ -251,7 +262,7 @@ public class InsertPassengerScene extends Parent {
         //cancel button
         Button cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> {
-            luggageWeightInput.setBackground(new Background(new BackgroundFill(Paint.valueOf("#ffffff"), CornerRadii.EMPTY, Insets.EMPTY )));
+
             firstNameInput.clear();
             lastNameInput.clear();
             birthDatePicker.getEditor().clear();
@@ -261,6 +272,8 @@ public class InsertPassengerScene extends Parent {
             luggageWeightInput.clear();
             choiceBoxFlights.getSelectionModel().clearSelection();
             choiceBoxSeats.getSelectionModel().clearSelection();
+
+            removeWarnings();
             window.setScene(scene1);
         });
         GridPane.setConstraints(cancelButton, 2, 12);
@@ -277,48 +290,72 @@ public class InsertPassengerScene extends Parent {
         return sceneAddPassenger;
     }
 
-    private static boolean isNotEmpty(TextField luggage, TextField firstNameInput, TextField lastNameInput, DatePicker birthDatePicker, TextField addressInput, TextField citizenshipInput) {
+
+
+    private static boolean isNotEmpty(TextField luggage, TextField firstNameInput, TextField lastNameInput, DatePicker birthDatePicker, TextField addressInput, TextField citizenshipInput, Integer selectedItem, Integer selectedItem1) {
         boolean empty = false;
         if (!isInt(luggage, luggage.getText())){
+            GridPane.setConstraints(warning[5], 2, 6);
+            gridAddPassenger.getChildren().add(warning[5]);
             empty = true;
-            luggage.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
         }
         if (firstNameInput.getText().isEmpty()){
+            GridPane.setConstraints(warning[0], 2, 1);
+            gridAddPassenger.getChildren().add(warning[0]);
             empty = true;
-            firstNameInput.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
         }
         if (lastNameInput.getText().isEmpty()){
+            GridPane.setConstraints(warning[1], 2, 2);
+            gridAddPassenger.getChildren().add(warning[1]);
             empty = true;
-            lastNameInput.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
         }
         if (birthDatePicker.getValue() == null){
-            empty = true;
-            birthDatePicker.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
+            GridPane.setConstraints(warning[3], 2, 4);
+            gridAddPassenger.getChildren().add(warning[3]);
+            empty = true;;
         }
         if (addressInput.getText().isEmpty()){
+            GridPane.setConstraints(warning[2], 2, 3);
+            gridAddPassenger.getChildren().add(warning[2]);
             empty = true;
-            addressInput.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
         }
         if (citizenshipInput.getText().isEmpty()){
+            GridPane.setConstraints(warning[4], 2, 5);
+            gridAddPassenger.getChildren().add(warning[4]);
             empty = true;
-            citizenshipInput.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
         }
-        if (empty) return false;
-        return true;
+        if (selectedItem == null){
+            GridPane.setConstraints(warning[6], 2, 7);
+            gridAddPassenger.getChildren().add(warning[6]);
+            empty = true;
+        }
+        if (selectedItem1 == null){
+            GridPane.setConstraints(warning[7], 2, 11);
+            gridAddPassenger.getChildren().add(warning[7]);
+        }
+        return !empty;
     }
 
     private static boolean isInt(TextField input, String message){
         try{
             int number = Integer.parseInt(message);
             if(number<=0){
-                input.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
                 return false;
             }
             return true;
         }catch(NumberFormatException e){
-            input.setBackground(new Background(new BackgroundFill(Paint.valueOf("#eb5505"), CornerRadii.EMPTY, Insets.EMPTY )));
             return false;
         }
+    }
+    private static void removeWarnings() {
+        gridAddPassenger.getChildren().removeIf(node -> GridPane.getRowIndex(node) == 1 && GridPane.getColumnIndex(node) == 2);
+        gridAddPassenger.getChildren().removeIf(node -> GridPane.getRowIndex(node) == 2 && GridPane.getColumnIndex(node) == 2);
+        gridAddPassenger.getChildren().removeIf(node -> GridPane.getRowIndex(node) == 3 && GridPane.getColumnIndex(node) == 2);
+        gridAddPassenger.getChildren().removeIf(node -> GridPane.getRowIndex(node) == 4 && GridPane.getColumnIndex(node) == 2);
+        gridAddPassenger.getChildren().removeIf(node -> GridPane.getRowIndex(node) == 5 && GridPane.getColumnIndex(node) == 2);
+        gridAddPassenger.getChildren().removeIf(node -> GridPane.getRowIndex(node) == 6 && GridPane.getColumnIndex(node) == 2);
+        gridAddPassenger.getChildren().removeIf(node -> GridPane.getRowIndex(node) == 7 && GridPane.getColumnIndex(node) == 2);
+        gridAddPassenger.getChildren().removeIf(node -> GridPane.getRowIndex(node) == 11 && GridPane.getColumnIndex(node) == 2);
     }
 
 
