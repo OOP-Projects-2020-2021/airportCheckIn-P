@@ -1,5 +1,8 @@
 package oop.project;
 
+import oop.project.database.MySqlCon;
+import oop.project.gui.GUI;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;

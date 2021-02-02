@@ -1,5 +1,6 @@
 package oop.project;
 
+import oop.project.database.MySqlCon;
 public class Ticket {
     private int seat;
     private int flightId;

@@ -1,5 +1,6 @@
 package oop.project;
 
+import oop.project.database.MySqlCon;
 import java.util.Random;
 
 public class Luggage {

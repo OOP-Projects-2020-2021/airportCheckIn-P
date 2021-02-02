@@ -1,4 +1,7 @@
-package oop.project;
+package oop.project.gui;
+
+import oop.project.*;
+import oop.project.database.MySqlCon;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -235,7 +238,7 @@ public class InsertPassengerScene extends Parent {
                 int luggageWeight=Integer.parseInt(luggageWeightInput.getText());   //get the luggage weight
 
                 Passenger passenger = new Passenger(firstNameInput.getText(), lastNameInput.getText(), birthDateInput, addressInput.getText(),
-                choiceBoxNationality.getSelectionModel().getSelectedItem(), luggageWeight, choiceBoxFlights.getSelectionModel().getSelectedItem(),
+                        choiceBoxNationality.getSelectionModel().getSelectedItem(), luggageWeight, choiceBoxFlights.getSelectionModel().getSelectedItem(),
                         choiceBoxSeats.getSelectionModel().getSelectedItem(), queueNumber);
 
                 Main.addToQueue(passenger, queueNumber);    // add passenger to queue

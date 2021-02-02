@@ -1,4 +1,4 @@
-package oop.project;
+package oop.project.database;
 import java.sql.*;
 
 public class MySqlCon {

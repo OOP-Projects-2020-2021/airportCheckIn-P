@@ -1,5 +1,6 @@
-package oop.project;
+package oop.project.gui;
 
+import oop.project.database.MySqlCon;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

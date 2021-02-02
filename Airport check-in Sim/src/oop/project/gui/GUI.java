@@ -1,4 +1,5 @@
-package oop.project;
+package oop.project.gui;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -17,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import oop.project.*;
 
 
 import java.util.Queue;
